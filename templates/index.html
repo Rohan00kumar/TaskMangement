@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow | Enterprise Task & Project Management</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dark-theme">
+    <div id="app" class="app-container">
+        
+        <!-- Auth Section -->
+        <section id="auth-section" class="auth-wrapper">
+            <div class="auth-glow glow-1"></div>
+            <div class="auth-glow glow-2"></div>
+            <div class="auth-card glass-panel">
+                <div class="auth-header">
+                    <div class="brand">
+                        <div class="brand-icon">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h2>TaskFlow</h2>
+                    </div>
+                    <p id="auth-subtitle">Enterprise Task & Project Management Platform</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <button class="tab-btn active" id="tab-login-btn">Log In</button>
+                    <button class="tab-btn" id="tab-register-btn">Register</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active">
+                    <div class="input-group">
+                        <label for="login-username"><i class="fa-regular fa-user"></i> Username</label>
+                        <input type="text" id="login-username" placeholder="e.g. alex_dev" required autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <span>Sign In</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="auth-form">
+                    <div class="input-group">
+                        <label for="reg-username"><i class="fa-regular fa-user"></i> Username</label>
+                        <input type="text" id="reg-username" placeholder="Choose a username" required autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-email"><i class="fa-regular fa-envelope"></i> Email Address</label>
+                        <input type="email" id="reg-email" placeholder="alex@example.com" required autocomplete="email">
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" id="reg-password" placeholder="At least 6 characters" required autocomplete="new-password">
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-role"><i class="fa-solid fa-user-shield"></i> Role</label>
+                        <select id="reg-role" class="select-input">
+                            <option value="member" selected>Team Member</option>
+                            <option value="manager">Project Manager</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-accent btn-full">
+                        <span>Create Account</span>
+                        <i class="fa-solid fa-user-plus"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="dashboard-wrapper hidden">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar glass-panel">
+                <div class="sidebar-brand">
+                    <div class="brand-icon">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <span class="brand-name">TaskFlow</span>
+                </div>
+
+                <nav class="sidebar-menu">
+                    <div class="menu-category">Main Navigation</div>
+                    <button class="nav-tab active" data-tab="tasks">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Tasks</span>
+                        <span class="badge" id="count-all">0</span>
+                    </button>
+                    <button class="nav-tab" data-tab="projects">
+                        <i class="fa-solid fa-folder-closed"></i>
+                        <span>Projects</span>
+                        <span class="badge badge-info" id="count-projects">0</span>
+                    </button>
+                    <button class="nav-tab" data-tab="team">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Team</span>
+                        <span class="badge" id="count-team">0</span>
+                    </button>
+
+                    <div class="menu-category">Task Filters</div>
+                    <button class="filter-item active" data-filter-status="all">
+                        <i class="fa-solid fa-border-all"></i>
+                        <span>All Tasks</span>
+                    </button>
+                    <button class="filter-item" data-filter-status="pending">
+                        <i class="fa-regular fa-clock"></i>
+                        <span>Pending</span>
+                        <span class="badge badge-warning" id="count-pending">0</span>
+                    </button>
+                    <button class="filter-item" data-filter-status="in_progress">
+                        <i class="fa-solid fa-spinner"></i>
+                        <span>In Progress</span>
+                        <span class="badge badge-info" id="count-in_progress">0</span>
+                    </button>
+                    <button class="filter-item" data-filter-status="completed">
+                        <i class="fa-regular fa-circle-check"></i>
+                        <span>Completed</span>
+                        <span class="badge badge-success" id="count-completed">0</span>
+                    </button>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="user-profile">
+                        <div class="avatar" id="user-avatar">U</div>
+                        <div class="user-info">
+                            <span class="username" id="display-username">User</span>
+                            <span class="user-role badge-role" id="display-role">Member</span>
+                        </div>
+                    </div>
+                    <button id="logout-btn" class="btn-icon" title="Log Out">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Top Header -->
+                <header class="top-header glass-panel">
+                    <div class="header-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-input" placeholder="Search tasks by title...">
+                    </div>
+                    <div class="header-actions">
+                        <div class="view-toggle" id="view-toggle-container">
+                            <button class="toggle-btn active" id="view-board-btn" title="Kanban Board View">
+                                <i class="fa-solid fa-table-columns"></i>
+                            </button>
+                            <button class="toggle-btn" id="view-list-btn" title="List View">
+                                <i class="fa-solid fa-list-check"></i>
+                            </button>
+                        </div>
+                        <button class="btn btn-accent" id="open-create-project-modal">
+                            <i class="fa-solid fa-folder-plus"></i>
+                            <span>New Project</span>
+                        </button>
+                        <button class="btn btn-primary" id="open-create-modal">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>New Task</span>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Statistics Banner -->
+                <section class="stats-grid">
+                    <div class="stat-card glass-panel">
+                        <div class="stat-icon icon-indigo">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-label">Total Tasks</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="stat-icon icon-amber">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="stat-pending">0</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="stat-icon icon-cyan">
+                            <i class="fa-solid fa-spinner"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="stat-in-progress">0</span>
+                            <span class="stat-label">In Progress</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="stat-icon icon-emerald">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-value" id="stat-completed">0</span>
+                            <span class="stat-label">Completed</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tasks Tab View -->
+                <div id="tab-view-tasks" class="tab-content active">
+                    <!-- Filters Bar -->
+                    <section class="filter-bar">
+                        <div class="filter-group">
+                            <label><i class="fa-solid fa-filter"></i> Priority:</label>
+                            <select id="priority-filter" class="select-input select-sm">
+                                <option value="all">All Priorities</option>
+                                <option value="high">High Priority</option>
+                                <option value="medium">Medium Priority</option>
+                                <option value="low">Low Priority</option>
+                            </select>
+
+                            <label><i class="fa-solid fa-folder"></i> Project:</label>
+                            <select id="project-filter" class="select-input select-sm">
+                                <option value="all">All Projects</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <!-- Kanban Board View -->
+                    <section id="kanban-view" class="kanban-board">
+                        <div class="kanban-column" data-status="pending">
+                            <div class="column-header header-pending">
+                                <div class="col-title">
+                                    <span class="dot dot-amber"></span>
+                                    <h3>Pending</h3>
+                                </div>
+                                <span class="column-count" id="kanban-count-pending">0</span>
+                            </div>
+                            <div class="task-list" id="list-pending"></div>
+                        </div>
+
+                        <div class="kanban-column" data-status="in_progress">
+                            <div class="column-header header-progress">
+                                <div class="col-title">
+                                    <span class="dot dot-cyan"></span>
+                                    <h3>In Progress</h3>
+                                </div>
+                                <span class="column-count" id="kanban-count-in_progress">0</span>
+                            </div>
+                            <div class="task-list" id="list-in_progress"></div>
+                        </div>
+
+                        <div class="kanban-column" data-status="completed">
+                            <div class="column-header header-completed">
+                                <div class="col-title">
+                                    <span class="dot dot-emerald"></span>
+                                    <h3>Completed</h3>
+                                </div>
+                                <span class="column-count" id="kanban-count-completed">0</span>
+                            </div>
+                            <div class="task-list" id="list-completed"></div>
+                        </div>
+                    </section>
+
+                    <!-- List View -->
+                    <section id="list-view" class="list-container hidden">
+                        <div class="table-card glass-panel">
+                            <table class="tasks-table">
+                                <thead>
+                                    <tr>
+                                        <th>Task Name</th>
+                                        <th>Project</th>
+                                        <th>Assignee</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body"></tbody>
+                            </table>
+                            <div id="table-empty-state" class="empty-state hidden">
+                                <i class="fa-solid fa-folder-open"></i>
+                                <p>No tasks found.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Projects Tab View -->
+                <div id="tab-view-projects" class="tab-content hidden">
+                    <div class="section-title">
+                        <h2>Projects</h2>
+                        <p class="text-muted">Manage active projects and team deliverables</p>
+                    </div>
+                    <div class="projects-grid" id="projects-grid"></div>
+                </div>
+
+                <!-- Team Tab View -->
+                <div id="tab-view-team" class="tab-content hidden">
+                    <div class="section-title">
+                        <h2>Team Members</h2>
+                        <p class="text-muted">Collaborate with members, managers, and administrators</p>
+                    </div>
+                    <div class="team-grid" id="team-grid"></div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- Task Create/Edit Modal -->
+        <div id="task-modal" class="modal-backdrop hidden">
+            <div class="modal-card glass-panel">
+                <div class="modal-header">
+                    <h3 id="modal-title"><i class="fa-solid fa-plus"></i> Create New Task</h3>
+                    <button id="close-task-modal" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="task-form">
+                    <input type="hidden" id="task-id">
+                    
+                    <div class="input-group">
+                        <label for="task-title">Title <span class="req">*</span></label>
+                        <input type="text" id="task-title" placeholder="e.g. Review release candidate" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="task-desc">Description</label>
+                        <textarea id="task-desc" rows="2" placeholder="Add optional details..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="task-status">Status</label>
+                            <select id="task-status" class="select-input">
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="task-priority">Priority</label>
+                            <select id="task-priority" class="select-input">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="task-project">Project</label>
+                            <select id="task-project" class="select-input">
+                                <option value="">(None)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="task-assignee">Assign To</label>
+                            <select id="task-assignee" class="select-input">
+                                <option value="">Unassigned</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="task-due-date"><i class="fa-regular fa-calendar"></i> Due Date</label>
+                        <input type="date" id="task-due-date">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" id="cancel-task-btn" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="save-task-btn">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Save Task</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Project Create Modal -->
+        <div id="project-modal" class="modal-backdrop hidden">
+            <div class="modal-card glass-panel">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-folder-plus"></i> Create New Project</h3>
+                    <button id="close-project-modal" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="project-form">
+                    <div class="input-group">
+                        <label for="project-name">Project Name <span class="req">*</span></label>
+                        <input type="text" id="project-name" placeholder="e.g. Q3 System Migration" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="project-desc">Description</label>
+                        <textarea id="project-desc" rows="3" placeholder="Outline project objectives..."></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="cancel-project-btn" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-accent">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Create Project</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Comments Modal / Drawer -->
+        <div id="comments-modal" class="modal-backdrop hidden">
+            <div class="modal-card glass-panel modal-lg">
+                <div class="modal-header">
+                    <h3 id="comments-modal-title"><i class="fa-regular fa-comments"></i> Task Comments</h3>
+                    <button id="close-comments-modal" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="comments-body">
+                    <div class="comments-list" id="comments-list">
+                        <!-- Dynamic Comments -->
+                    </div>
+                    <form id="comment-form" class="comment-input-area">
+                        <input type="hidden" id="comment-task-id">
+                        <input type="text" id="comment-content" placeholder="Write a comment..." required>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications Container -->
+        <div id="toast-container" class="toast-container"></div>
+
+    </div>
+
+    <!-- Application JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
