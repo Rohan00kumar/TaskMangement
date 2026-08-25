@@ -1,5 +1,6 @@
 /**
  * TaskFlow Application JavaScript
+ * Enterprise Task & Project Management Single Page Application
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeStatusFilter = 'all';
     let activePriorityFilter = 'all';
     let activeProjectFilter = 'all';
+    let activeSortFilter = 'created_desc';
     let searchQuery = '';
     let currentView = 'board'; // 'board' or 'list'
 
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const authSection = document.getElementById('auth-section');
     const dashboardSection = document.getElementById('dashboard-section');
     
-    // Auth
+    // Auth Controls
     const tabLoginBtn = document.getElementById('tab-login-btn');
     const tabRegisterBtn = document.getElementById('tab-register-btn');
     const loginForm = document.getElementById('login-form');
@@ -41,8 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const priorityFilter = document.getElementById('priority-filter');
     const projectFilter = document.getElementById('project-filter');
+    const sortFilter = document.getElementById('sort-filter');
     const viewBoardBtn = document.getElementById('view-board-btn');
     const viewListBtn = document.getElementById('view-list-btn');
+    const exportCsvBtn = document.getElementById('export-csv-btn');
 
     // Views
     const kanbanView = document.getElementById('kanban-view');
@@ -55,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectsGrid = document.getElementById('projects-grid');
     const teamGrid = document.getElementById('team-grid');
 
-    // Stats Counters
+    // Stats & Progress Counters
     const statTotal = document.getElementById('stat-total');
     const statPending = document.getElementById('stat-pending');
     const statInProgress = document.getElementById('stat-in-progress');
@@ -69,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const kanbanCountPending = document.getElementById('kanban-count-pending');
     const kanbanCountInProgress = document.getElementById('kanban-count-in_progress');
     const kanbanCountCompleted = document.getElementById('kanban-count-completed');
+    const taskProgressBar = document.getElementById('task-progress-bar');
+    const taskProgressText = document.getElementById('task-progress-text');
 
     // Task Modal
     const taskModal = document.getElementById('task-modal');
@@ -105,13 +111,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
 
-    function init() {
-        if (token && currentUser) {
-            showDashboard();
+    // --- Initialization & Session Handling ---
+
+    async function init() {
+        setupEventListeners();
+        if (token) {
+            const isValid = await verifySession();
+            if (isValid) {
+                showDashboard();
+            } else {
+                showAuth();
+            }
         } else {
             showAuth();
         }
-        setupEventListeners();
+    }
+
+    async function verifySession() {
+        if (!token) return false;
+        try {
+            const response = await fetch('/api/auth/me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                currentUser = await response.json();
+                localStorage.setItem('task_user', JSON.stringify(currentUser));
+                return true;
+            } else {
+                token = null;
+                currentUser = null;
+                localStorage.removeItem('task_token');
+                localStorage.removeItem('task_user');
+                return false;
+            }
+        } catch (err) {
+            console.error('Session verification failed:', err);
+            return false;
+        }
     }
 
     function showAuth() {
@@ -134,8 +170,31 @@ document.addEventListener('DOMContentLoaded', () => {
         await Promise.all([fetchProjects(), fetchUsers(), fetchTasks()]);
     }
 
+    // Central API Request Wrapper
+    async function apiFetch(url, options = {}) {
+        const headers = options.headers ? { ...options.headers } : {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        const finalOptions = { ...options, headers };
+
+        try {
+            const response = await fetch(url, finalOptions);
+            if (response.status === 401 && token) {
+                handleLogout('Session expired. Please log in again.');
+                return null;
+            }
+            return response;
+        } catch (err) {
+            console.error(`API Fetch Error [${url}]:`, err);
+            throw err;
+        }
+    }
+
+    // --- Event Listeners Setup ---
+
     function setupEventListeners() {
-        // Tab switching in Auth
+        // Auth Tab switching
         tabLoginBtn.addEventListener('click', () => {
             tabLoginBtn.classList.add('active');
             tabRegisterBtn.classList.remove('active');
@@ -150,11 +209,28 @@ document.addEventListener('DOMContentLoaded', () => {
             loginForm.classList.remove('active');
         });
 
+        // Password visibility toggles
+        document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (!input) return;
+                const icon = btn.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fa-regular fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fa-regular fa-eye';
+                }
+            });
+        });
+
         loginForm.addEventListener('submit', handleLogin);
         registerForm.addEventListener('submit', handleRegister);
-        logoutBtn.addEventListener('click', handleLogout);
+        logoutBtn.addEventListener('click', () => handleLogout('Logged out successfully'));
 
-        // Sidebar Navigation
+        // Navigation Tabs
         navTabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 navTabs.forEach(t => t.classList.remove('active'));
@@ -164,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        // Task Status Filters
         filterItems.forEach(item => {
             item.addEventListener('click', () => {
                 filterItems.forEach(i => i.classList.remove('active'));
@@ -183,6 +260,13 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchTasks();
         });
 
+        if (sortFilter) {
+            sortFilter.addEventListener('change', (e) => {
+                activeSortFilter = e.target.value;
+                sortAndRenderTasks();
+            });
+        }
+
         let searchTimeout;
         searchInput.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
@@ -192,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300);
         });
 
+        // Board vs List view toggles
         viewBoardBtn.addEventListener('click', () => {
             currentView = 'board';
             viewBoardBtn.classList.add('active');
@@ -209,6 +294,10 @@ document.addEventListener('DOMContentLoaded', () => {
             kanbanView.classList.add('hidden');
             renderTasksView();
         });
+
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener('click', exportTasksToCSV);
+        }
 
         // Modals
         openCreateModalBtn.addEventListener('click', () => openTaskModal());
@@ -299,12 +388,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function handleLogout() {
+    function handleLogout(message = 'Logged out') {
         token = null;
         currentUser = null;
         localStorage.removeItem('task_token');
         localStorage.removeItem('task_user');
-        showToast('Logged out successfully', 'info');
+        showToast(message, 'info');
         showAuth();
     }
 
@@ -313,9 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchProjects() {
         if (!token) return;
         try {
-            const response = await fetch('/api/projects', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await apiFetch('/api/projects');
+            if (!response) return;
             if (response.ok) {
                 projects = await response.json();
                 countProjects.textContent = projects.length;
@@ -352,14 +440,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!name) return;
 
         try {
-            const response = await fetch('/api/projects', {
+            const response = await apiFetch('/api/projects', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, description })
             });
+            if (!response) return;
 
             if (response.ok) {
                 showToast('Project created!', 'success');
@@ -407,21 +493,20 @@ document.addEventListener('DOMContentLoaded', () => {
             card.querySelector('.filter-project-btn').addEventListener('click', () => {
                 activeProjectFilter = p.id;
                 projectFilter.value = p.id;
-                navTabs[0].click(); // Switch to tasks tab
+                navTabs[0].click();
             });
 
             projectsGrid.appendChild(card);
         });
     }
 
-    // --- Users / Team API & Rendering ---
+    // --- Users / Team API ---
 
     async function fetchUsers() {
         if (!token) return;
         try {
-            const response = await fetch('/api/auth/users', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await apiFetch('/api/auth/users');
+            if (!response) return;
             if (response.ok) {
                 users = await response.json();
                 countTeam.textContent = users.length;
@@ -458,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Tasks API & Rendering ---
+    // --- Tasks API & Sorting ---
 
     async function fetchTasks() {
         if (!token) return;
@@ -470,24 +555,41 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
 
         try {
-            const response = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (response.status === 401) {
-                handleLogout();
-                return;
-            }
+            const response = await apiFetch(url);
+            if (!response) return;
 
             const data = await response.json();
             if (response.ok) {
                 tasks = data.tasks || [];
                 updateStats();
-                renderTasksView();
+                sortAndRenderTasks();
             }
         } catch (err) {
             showToast('Error fetching tasks', 'error');
         }
+    }
+
+    function sortAndRenderTasks() {
+        const priorityWeight = { 'high': 3, 'medium': 2, 'low': 1 };
+
+        tasks.sort((a, b) => {
+            if (activeSortFilter === 'created_asc') {
+                return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+            } else if (activeSortFilter === 'due_date') {
+                if (!a.due_date) return 1;
+                if (!b.due_date) return -1;
+                return new Date(a.due_date) - new Date(b.due_date);
+            } else if (activeSortFilter === 'priority') {
+                return (priorityWeight[b.priority] || 0) - (priorityWeight[a.priority] || 0);
+            } else if (activeSortFilter === 'title') {
+                return (a.title || '').localeCompare(b.title || '');
+            } else {
+                // created_desc (default)
+                return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+            }
+        });
+
+        renderTasksView();
     }
 
     async function handleTaskSubmit(e) {
@@ -508,14 +610,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const method = id ? 'PUT' : 'POST';
 
         try {
-            const response = await fetch(url, {
+            const response = await apiFetch(url, {
                 method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
+            if (!response) return;
 
             if (response.ok) {
                 showToast(id ? 'Task updated!' : 'Task created!', 'success');
@@ -533,14 +633,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function updateTaskStatus(id, newStatus) {
         try {
-            const response = await fetch(`/api/tasks/${id}`, {
+            const response = await apiFetch(`/api/tasks/${id}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus })
             });
+            if (!response) return;
+
             if (response.ok) {
                 showToast('Status updated', 'success');
                 fetchTasks();
@@ -554,10 +653,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm('Are you sure you want to delete this task?')) return;
 
         try {
-            const response = await fetch(`/api/tasks/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await apiFetch(`/api/tasks/${id}`, {
+                method: 'DELETE'
             });
+            if (!response) return;
+
             if (response.ok) {
                 showToast('Task deleted', 'info');
                 fetchTasks();
@@ -566,6 +666,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             showToast('Error deleting task', 'error');
         }
+    }
+
+    // --- Task Rendering & Overdue Detection ---
+
+    function isOverdue(task) {
+        if (!task.due_date || task.status === 'completed') return false;
+        const due = new Date(task.due_date);
+        const now = new Date();
+        return due < now;
     }
 
     function renderTasksView() {
@@ -603,6 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('div');
         card.className = 'task-card';
 
+        const overdue = isOverdue(task);
         const dueDateFormatted = task.due_date ? new Date(task.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : null;
 
         card.innerHTML = `
@@ -615,7 +725,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="card-meta-row">
                 ${task.project_name ? `<span class="project-chip"><i class="fa-solid fa-folder"></i> ${escapeHtml(task.project_name)}</span>` : ''}
                 ${task.assignee_username ? `<span class="assignee-chip"><i class="fa-regular fa-user"></i> ${escapeHtml(task.assignee_username)}</span>` : ''}
-                ${dueDateFormatted ? `<span class="due-chip"><i class="fa-regular fa-calendar"></i> ${dueDateFormatted}</span>` : ''}
+                ${dueDateFormatted ? `
+                    <span class="due-chip ${overdue ? 'overdue' : ''}">
+                        <i class="${overdue ? 'fa-solid fa-triangle-exclamation' : 'fa-regular fa-calendar'}"></i> 
+                        ${overdue ? 'Overdue: ' : ''}${dueDateFormatted}
+                    </span>
+                ` : ''}
             </div>
 
             <div class="card-footer">
@@ -657,6 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tasks.forEach(task => {
             const tr = document.createElement('tr');
+            const overdue = isOverdue(task);
             const dueDateFormatted = task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A';
 
             tr.innerHTML = `
@@ -666,7 +782,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td>${task.project_name ? `<span class="project-chip">${escapeHtml(task.project_name)}</span>` : '-'}</td>
                 <td>${task.assignee_username ? `<span class="assignee-chip">${escapeHtml(task.assignee_username)}</span>` : '-'}</td>
-                <td>${dueDateFormatted}</td>
+                <td><span class="${overdue ? 'due-chip overdue' : ''}">${dueDateFormatted}</span></td>
                 <td><span class="badge badge-${getBadgeClass(task.status)}">${formatStatus(task.status)}</span></td>
                 <td><span class="priority-tag priority-${task.priority}">${task.priority}</span></td>
                 <td class="text-right">
@@ -681,6 +797,39 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.querySelector('.comment-btn').addEventListener('click', () => openCommentsModal(task.id, task.title));
             tableBody.appendChild(tr);
         });
+    }
+
+    // --- Export Tasks to CSV ---
+
+    function exportTasksToCSV() {
+        if (!tasks || tasks.length === 0) {
+            showToast('No tasks available to export', 'info');
+            return;
+        }
+
+        const headers = ['ID', 'Title', 'Description', 'Status', 'Priority', 'Project', 'Assignee', 'Due Date', 'Created At'];
+        const rows = tasks.map(t => [
+            t.id,
+            `"${(t.title || '').replace(/"/g, '""')}"`,
+            `"${(t.description || '').replace(/"/g, '""')}"`,
+            t.status,
+            t.priority,
+            `"${(t.project_name || '').replace(/"/g, '""')}"`,
+            `"${(t.assignee_username || '').replace(/"/g, '""')}"`,
+            t.due_date || '',
+            t.created_at || ''
+        ]);
+
+        const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `taskflow_export_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showToast('Tasks exported to CSV!', 'success');
     }
 
     // --- Comments Modal ---
@@ -700,9 +849,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchComments(taskId) {
         try {
-            const response = await fetch(`/api/tasks/${taskId}/comments`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await apiFetch(`/api/tasks/${taskId}/comments`);
+            if (!response) return;
             if (response.ok) {
                 const comments = await response.json();
                 renderComments(comments);
@@ -739,19 +887,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!content || !taskId) return;
 
         try {
-            const response = await fetch(`/api/tasks/${taskId}/comments`, {
+            const response = await apiFetch(`/api/tasks/${taskId}/comments`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content })
             });
+            if (!response) return;
 
             if (response.ok) {
                 commentContentInput.value = '';
                 fetchComments(taskId);
-                fetchTasks(); // refresh comment counts
+                fetchTasks();
             }
         } catch (err) {
             showToast('Error posting comment', 'error');
@@ -802,6 +948,11 @@ document.addEventListener('DOMContentLoaded', () => {
         countPending.textContent = pending;
         countInProgress.textContent = inProgress;
         countCompleted.textContent = completed;
+
+        // Calculate progress percentage
+        const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+        if (taskProgressBar) taskProgressBar.style.width = pct + '%';
+        if (taskProgressText) taskProgressText.textContent = `${pct}% Completed (${completed}/${total} tasks)`;
     }
 
     function getBadgeClass(status) {

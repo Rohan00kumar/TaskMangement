@@ -44,7 +44,12 @@
                     </div>
                     <div class="input-group">
                         <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
-                        <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+                        <div class="password-field-wrapper">
+                            <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+                            <button type="button" class="toggle-password-btn" data-target="login-password" title="Toggle password visibility">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-full">
                         <span>Sign In</span>
@@ -64,7 +69,12 @@
                     </div>
                     <div class="input-group">
                         <label for="reg-password"><i class="fa-solid fa-lock"></i> Password</label>
-                        <input type="password" id="reg-password" placeholder="At least 6 characters" required autocomplete="new-password">
+                        <div class="password-field-wrapper">
+                            <input type="password" id="reg-password" placeholder="At least 6 characters" required autocomplete="new-password">
+                            <button type="button" class="toggle-password-btn" data-target="reg-password" title="Toggle password visibility">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label for="reg-role"><i class="fa-solid fa-user-shield"></i> Role</label>
@@ -164,6 +174,10 @@
                                 <i class="fa-solid fa-list-check"></i>
                             </button>
                         </div>
+                        <button class="btn btn-secondary" id="export-csv-btn" title="Export tasks to CSV">
+                            <i class="fa-solid fa-file-csv"></i>
+                            <span>Export CSV</span>
+                        </button>
                         <button class="btn btn-accent" id="open-create-project-modal">
                             <i class="fa-solid fa-folder-plus"></i>
                             <span>New Project</span>
@@ -215,6 +229,17 @@
                     </div>
                 </section>
 
+                <!-- Progress Bar Card -->
+                <section class="progress-section glass-panel">
+                    <div class="progress-header">
+                        <span><i class="fa-solid fa-chart-line"></i> Overall Tasks Completion Progress</span>
+                        <span id="task-progress-text">0% Completed</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar" id="task-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </section>
+
                 <!-- Tasks Tab View -->
                 <div id="tab-view-tasks" class="tab-content active">
                     <!-- Filters Bar -->
@@ -231,6 +256,15 @@
                             <label><i class="fa-solid fa-folder"></i> Project:</label>
                             <select id="project-filter" class="select-input select-sm">
                                 <option value="all">All Projects</option>
+                            </select>
+
+                            <label><i class="fa-solid fa-arrow-down-short-wide"></i> Sort By:</label>
+                            <select id="sort-filter" class="select-input select-sm">
+                                <option value="created_desc">Newest First</option>
+                                <option value="created_asc">Oldest First</option>
+                                <option value="due_date">Due Date</option>
+                                <option value="priority">Priority</option>
+                                <option value="title">Title (A-Z)</option>
                             </select>
                         </div>
                     </section>

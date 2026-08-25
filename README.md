@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Framework-Flask%203.1-green.svg)](https://flask.palletsprojects.com/)
 [![Database](https://img.shields.io/badge/Database-SQLite%2FSQLAlchemy-orange.svg)](https://www.sqlalchemy.org/)
-[![Auth](https://img.shields.io/badge/Auth-JWT%20(Flask--JWT--Extended)-red.svg)](https://flask-jwt-extended.readthedocs.io/)
+[![Auth](<https://img.shields.io/badge/Auth-JWT%20(Flask--JWT--Extended)-red.svg>)](https://flask-jwt-extended.readthedocs.io/)
 [![Deployment](https://img.shields.io/badge/Deploy-Render.com-black.svg)](https://render.com/)
 
 **TaskFlow** is a modern, high-performance, full-stack Task & Project Management application. Built with a robust **Flask REST API** backend and a responsive, dynamic **Single Page Application (SPA)** frontend featuring glassmorphism dark-mode UI.
@@ -11,6 +11,7 @@
 ---
 
 ## 📋 Table of Contents
+
 1. [Key Features](#-key-features)
 2. [Tech Stack & Use Cases](#-tech-stack--use-cases)
 3. [System Architecture](#-system-architecture)
@@ -37,19 +38,19 @@
 
 ## 🛠️ Tech Stack & Use Cases
 
-| Technology | Layer | Primary Use Case & Role |
-| :--- | :--- | :--- |
-| **Python 3.9+** | Core Language | Business logic, backend execution environment, and script automation. |
-| **Flask 3.1** | Web Framework | Lightweight RESTful Web Server API routing, request handling, and app factory. |
-| **Flask-SQLAlchemy** | ORM Layer | Object-Relational Mapping to interact with database tables via Python classes (`User`, `Task`, `Project`, `Comment`). |
-| **Flask-JWT-Extended** | Security / Auth | Generates, verifies, and decodes JSON Web Tokens (`Authorization: Bearer <token>`) for stateless endpoint protection. |
-| **Flask-CORS** | Security | Handles Cross-Origin Resource Sharing (CORS) headers for secure frontend-backend communication. |
-| **Werkzeug** | Security / Utilities | Password hashing (`generate_password_hash`, `check_password_hash`) and WSGI utilities. |
-| **Gunicorn 23.0** | WSGI Production Server | Pre-fork worker server used in production (Render) to serve concurrent HTTP requests. |
-| **SQLite / PostgreSQL** | Database | SQLite for zero-config local development; drop-in compatible with PostgreSQL for production. |
-| **Vanilla HTML5 & CSS3** | Frontend Presentation | Semantic HTML, CSS variables, Flexbox/Grid layout, animations, and custom dark glassmorphism theme. |
-| **Vanilla JavaScript (ES6+)** | Frontend Logic | Single Page Application state management, fetch API requests, JWT storage, DOM manipulation, and dynamic modal dialogs. |
-| **Pytest 8.x** | Automated Testing | Comprehensive unit and integration testing suite for auth, task isolation, and permissions. |
+| Technology                    | Layer                  | Primary Use Case & Role                                                                                                 |
+| :---------------------------- | :--------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| **Python 3.9+**               | Core Language          | Business logic, backend execution environment, and script automation.                                                   |
+| **Flask 3.1**                 | Web Framework          | Lightweight RESTful Web Server API routing, request handling, and app factory.                                          |
+| **Flask-SQLAlchemy**          | ORM Layer              | Object-Relational Mapping to interact with database tables via Python classes (`User`, `Task`, `Project`, `Comment`).   |
+| **Flask-JWT-Extended**        | Security / Auth        | Generates, verifies, and decodes JSON Web Tokens (`Authorization: Bearer <token>`) for stateless endpoint protection.   |
+| **Flask-CORS**                | Security               | Handles Cross-Origin Resource Sharing (CORS) headers for secure frontend-backend communication.                         |
+| **Werkzeug**                  | Security / Utilities   | Password hashing (`generate_password_hash`, `check_password_hash`) and WSGI utilities.                                  |
+| **Gunicorn 23.0**             | WSGI Production Server | Pre-fork worker server used in production (Render) to serve concurrent HTTP requests.                                   |
+| **SQLite / PostgreSQL**       | Database               | SQLite for zero-config local development; drop-in compatible with PostgreSQL for production.                            |
+| **Vanilla HTML5 & CSS3**      | Frontend Presentation  | Semantic HTML, CSS variables, Flexbox/Grid layout, animations, and custom dark glassmorphism theme.                     |
+| **Vanilla JavaScript (ES6+)** | Frontend Logic         | Single Page Application state management, fetch API requests, JWT storage, DOM manipulation, and dynamic modal dialogs. |
+| **Pytest 8.x**                | Automated Testing      | Comprehensive unit and integration testing suite for auth, task isolation, and permissions.                             |
 
 ---
 
@@ -175,51 +176,55 @@ TaskMangement/
 
 ### 1. Authentication Endpoints (`/api/auth`)
 
-| Method | Endpoint | Request Body | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | `{"username", "email", "password"}` | Register a new user account |
-| `POST` | `/api/auth/login` | `{"username", "password"}` | Authenticate user & return JWT token |
-| `GET` | `/api/auth/me` | *Header: Bearer Token* | Retrieve current user profile |
+| Method | Endpoint             | Request Body                        | Description                          |
+| :----- | :------------------- | :---------------------------------- | :----------------------------------- |
+| `POST` | `/api/auth/register` | `{"username", "email", "password"}` | Register a new user account          |
+| `POST` | `/api/auth/login`    | `{"username", "password"}`          | Authenticate user & return JWT token |
+| `GET`  | `/api/auth/me`       | _Header: Bearer Token_              | Retrieve current user profile        |
 
 ### 2. Task Endpoints (`/api/tasks`)
-*All task endpoints require `Authorization: Bearer <access_token>` header.*
 
-| Method | Endpoint | Query Parameters | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/tasks` | `status`, `priority`, `search`, `page`, `per_page` | List & filter user tasks with pagination |
-| `POST` | `/api/tasks` | Body: `{"title", "description", "status", "priority", "project_id"}` | Create a new task |
-| `GET` | `/api/tasks/<id>` | — | Fetch details of a specific task |
-| `PUT` | `/api/tasks/<id>` | Body: `{"title", "status", "priority", ...}` | Update an existing task |
-| `DELETE` | `/api/tasks/<id>` | — | Delete a task |
+_All task endpoints require `Authorization: Bearer <access_token>` header._
+
+| Method   | Endpoint          | Query Parameters                                                     | Description                              |
+| :------- | :---------------- | :------------------------------------------------------------------- | :--------------------------------------- |
+| `GET`    | `/api/tasks`      | `status`, `priority`, `search`, `page`, `per_page`                   | List & filter user tasks with pagination |
+| `POST`   | `/api/tasks`      | Body: `{"title", "description", "status", "priority", "project_id"}` | Create a new task                        |
+| `GET`    | `/api/tasks/<id>` | —                                                                    | Fetch details of a specific task         |
+| `PUT`    | `/api/tasks/<id>` | Body: `{"title", "status", "priority", ...}`                         | Update an existing task                  |
+| `DELETE` | `/api/tasks/<id>` | —                                                                    | Delete a task                            |
 
 ### 3. Project Endpoints (`/api/projects`)
-*All project endpoints require `Authorization: Bearer <access_token>` header.*
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/projects` | List all projects created by user |
-| `POST` | `/api/projects` | Create a new project |
-| `GET` | `/api/projects/<id>` | Retrieve project details & associated tasks |
-| `PUT` | `/api/projects/<id>` | Update project details |
-| `DELETE` | `/api/projects/<id>` | Delete project |
+_All project endpoints require `Authorization: Bearer <access_token>` header._
+
+| Method   | Endpoint             | Description                                 |
+| :------- | :------------------- | :------------------------------------------ |
+| `GET`    | `/api/projects`      | List all projects created by user           |
+| `POST`   | `/api/projects`      | Create a new project                        |
+| `GET`    | `/api/projects/<id>` | Retrieve project details & associated tasks |
+| `PUT`    | `/api/projects/<id>` | Update project details                      |
+| `DELETE` | `/api/projects/<id>` | Delete project                              |
 
 ### 4. System Health (`/api/health`)
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/health` | Service health status check (`{"status": "ok"}`) |
+| Method | Endpoint      | Description                                      |
+| :----- | :------------ | :----------------------------------------------- |
+| `GET`  | `/api/health` | Service health status check (`{"status": "ok"}`) |
 
 ---
 
 ## 💻 Local Setup & Installation
 
 ### Prerequisites
+
 - Python 3.9 or higher
 - Git
 
 ### Step-by-Step Installation
 
 1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/Rohan00kumar/TaskMangement.git
    cd TaskMangement
@@ -238,11 +243,13 @@ TaskMangement/
      ```
 
 3. **Install Dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. **Run the Application**
+
    ```bash
    python app.py
    ```
@@ -269,6 +276,7 @@ pytest tests/ -v
 This repository includes a pre-configured [`render.yaml`](file:///d:/My%20Projects/ILP/TaskMangement/render.yaml) blueprint file.
 
 ### Instant Blueprint Deployment
+
 1. Log into your [Render Dashboard](https://dashboard.render.com).
 2. Click **New +** $\rightarrow$ **Blueprint**.
 3. Connect your GitHub repository (`Rohan00kumar/TaskMangement`).
