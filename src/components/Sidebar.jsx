@@ -51,10 +51,10 @@ export default function Sidebar({
 }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'exams', label: 'Target Exams', icon: GraduationCap, badge: examsCount },
-    { id: 'projects', label: 'Projects & Ideas', icon: BarChart3, badge: projectsCount },
+    { id: 'exams', label: 'Exams', icon: GraduationCap, badge: examsCount },
+    { id: 'projects', label: 'Projects', icon: BarChart3, badge: projectsCount },
     { id: 'courses', label: 'Courses & Skills', icon: BookOpen, badge: coursesCount },
-    { id: 'tracking', label: 'Tracking & Schedule', icon: Target, badge: trackingCount },
+    { id: 'tracking', label: 'Schedule', icon: Target, badge: trackingCount },
   ];
 
   return (
@@ -114,17 +114,17 @@ export default function Sidebar({
           })}
         </nav>
 
-        {/* Bottom Actions: + ADD NEW TASK and User Card */}
+        {/* Bottom Actions: Add Item and User Card */}
         <div className="sidebar-bottom">
           <button
             className="btn-add-task-card"
             onClick={onOpenAddTask}
-            title="Add a new Target Exam, Project, Course or Milestone"
+            title="Add Target Exam, Project, Course or Milestone"
           >
             <div className="plus-circle">
-              <Plus size={18} strokeWidth={2.5} />
+              <Plus size={16} strokeWidth={2.5} />
             </div>
-            <span>+ ADD NEW ITEM</span>
+            <span>Add Item</span>
           </button>
 
           <div

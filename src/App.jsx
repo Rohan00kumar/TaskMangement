@@ -115,10 +115,10 @@ export default function App() {
   const tabTitles = {
     dashboard: 'Dashboard',
     exams: 'Target Exams',
-    projects: 'Projects & Ideas',
+    projects: 'Projects',
     courses: 'Courses & Skills',
-    tracking: 'Tracking & Schedule',
-    settings: 'Workspace Settings'
+    tracking: 'Schedule',
+    settings: 'Settings'
   };
 
   // =========================================================================

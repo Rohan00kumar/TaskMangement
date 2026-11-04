@@ -7,29 +7,29 @@ export default function StatCards({ stats, onSelectStat }) {
       id: 'total',
       colorClass: 'purple',
       icon: Check,
-      num: stats?.totalTask || 1220,
-      label: 'Total Task'
+      num: stats?.totalTask || 0,
+      label: 'Total Items'
     },
     {
       id: 'in_progress',
       colorClass: 'cyan',
       icon: Clock,
-      num: String(stats?.inProgress || 7).padStart(2, '0'),
-      label: 'InProgress'
+      num: String(stats?.inProgress || 0).padStart(2, '0'),
+      label: 'In Progress'
     },
     {
       id: 'pending',
       colorClass: 'coral',
       icon: Bell,
-      num: String(stats?.pending || 43).padStart(2, '0'),
+      num: String(stats?.pending || 0).padStart(2, '0'),
       label: 'Pending'
     },
     {
       id: 'completed',
       colorClass: 'green',
       icon: CheckCircle2,
-      num: stats?.completed || 1550,
-      label: 'completed'
+      num: stats?.completed || 0,
+      label: 'Completed'
     }
   ];
 

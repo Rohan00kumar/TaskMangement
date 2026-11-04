@@ -208,8 +208,10 @@ export default function ExamDetailModal({
                   onClose();
                   onOpenManageSubjects(exam);
                 }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
               >
-                + Edit Subjects
+                <Layers size={13} />
+                <span>Edit Topics</span>
               </button>
             )}
           </div>

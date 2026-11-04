@@ -30,10 +30,7 @@ export default function ProjectsView({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       <div className="view-header">
         <div className="view-title-wrap">
-          <h2 className="view-main-title">Software Projects & Ideas Lab</h2>
-          <p className="view-sub-desc">
-            Manage your active portfolio applications, deployed SaaS systems, and future architectural ideas.
-          </p>
+          <h2 className="view-main-title">Projects</h2>
         </div>
         <button
           type="button"
@@ -42,7 +39,7 @@ export default function ProjectsView({
           style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <Plus size={16} />
-          <span>+ Add Project / Idea</span>
+          <span>Add Project</span>
         </button>
       </div>
 
@@ -141,7 +138,7 @@ export default function ProjectsView({
                       textTransform: 'capitalize'
                     }}
                   >
-                    ● {(proj.status || 'in_progress').replace('_', ' ')}
+                    {(proj.status || 'in_progress').replace('_', ' ')}
                   </span>
                 </div>
               </div>
@@ -195,9 +192,10 @@ export default function ProjectsView({
               type="button"
               className="btn-primary"
               onClick={onOpenAddProject}
-              style={{ marginTop: '14px' }}
+              style={{ marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
-              + Add {activeType === 'current' ? 'Project' : 'Future Idea'}
+              <Plus size={14} />
+              <span>Add {activeType === 'current' ? 'Project' : 'Idea'}</span>
             </button>
           </div>
         )}

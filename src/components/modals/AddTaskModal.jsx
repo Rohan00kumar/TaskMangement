@@ -170,7 +170,7 @@ export default function AddTaskModal({
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content-card" style={{ maxWidth: '640px' }} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3 className="modal-title">+ Add New Item to Workspace</h3>
+          <h3 className="modal-title">Add Item</h3>
           <button className="modal-close-btn" onClick={onClose}>
             <X size={18} />
           </button>
@@ -212,7 +212,7 @@ export default function AddTaskModal({
         <form onSubmit={handleSubmit}>
           {category === 'exam' && (
             <>
-              {/* ⚡ Open-Source Syllabus & Weightage Auto-Populator */}
+              {/* Open-Source Syllabus & Weightage Auto-Populator */}
               <div className="open-syllabus-autobar" style={{ marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Sparkles size={16} color="var(--primary)" />
@@ -237,7 +237,7 @@ export default function AddTaskModal({
                       if (found) handleApplyPreset(found);
                     }}
                   >
-                    <option value="">⚡ Select Open-Source Exam Syllabus...</option>
+                    <option value="">Select Open-Source Exam Syllabus...</option>
                     {OPEN_SYLLABUS_PRESETS.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.name}
@@ -250,7 +250,7 @@ export default function AddTaskModal({
               {examSubjects.length > 0 && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
                   <span style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--primary)' }}>
-                    ✓ Auto-Loaded {examSubjects.length} Subjects:
+                    Auto-Loaded {examSubjects.length} Subjects:
                   </span>
                   {examSubjects.slice(0, 4).map((s) => (
                     <span key={s.id} className="minimal-weight-tag" style={{ fontSize: '10px' }}>
@@ -298,10 +298,10 @@ export default function AddTaskModal({
                     onChange={(e) => setExamCategory(e.target.value)}
                     className="form-select"
                   >
-                    <option value="PSU">🏢 PSU Recruitment (ISRO, BARC, DRDO, ONGC)</option>
-                    <option value="Technical">⚡ Technical & GATE (GATE CS/DA, AWS, LeetCode)</option>
-                    <option value="Non Technical">🏛️ Non-Technical Govt (UPSC, SSC CGL, Banking)</option>
-                    <option value="Offcampus">🚀 Offcampus Drives (TCS NQT, HackWithInfy, Amazon)</option>
+                    <option value="PSU">PSU Recruitment (ISRO, BARC, DRDO, ONGC)</option>
+                    <option value="Technical">Technical & GATE (GATE CS/DA, AWS, LeetCode)</option>
+                    <option value="Non Technical">Non-Technical Govt (UPSC, SSC CGL, Banking)</option>
+                    <option value="Offcampus">Offcampus Drives (TCS NQT, HackWithInfy, Amazon)</option>
                   </select>
                 </div>
                 <div className="form-group">

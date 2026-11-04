@@ -135,7 +135,7 @@ export default function SubjectManagerModal({
             </div>
           </div>
 
-          {/* ⚡ Open-Source Syllabus Auto-Populate Bar */}
+          {/* Open-Source Syllabus Auto-Populate Bar */}
           <div className="open-syllabus-autobar">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Sparkles size={16} color="var(--primary)" />
@@ -171,7 +171,7 @@ export default function SubjectManagerModal({
                   if (found) handleLoadPreset(found);
                 }}
               >
-                <option value="">⚡ Select other exam preset...</option>
+                <option value="">Select exam preset...</option>
                 {OPEN_SYLLABUS_PRESETS.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
@@ -225,7 +225,7 @@ export default function SubjectManagerModal({
 
               <button type="submit" className="btn-primary" style={{ padding: '8px 14px', fontSize: '12px', whiteSpace: 'nowrap' }}>
                 <Plus size={14} />
-                <span>+ Add Topic</span>
+                <span>Add Topic</span>
               </button>
             </div>
           </form>
@@ -302,7 +302,7 @@ export default function SubjectManagerModal({
         {/* Pinned Bottom Footer (Always Visible) */}
         <div className="modal-docked-footer">
           <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-            ✓ Changes save automatically to workspace
+            Changes save automatically to workspace
           </span>
           <button type="button" className="btn-primary" onClick={onClose} style={{ padding: '8px 24px' }}>
             Done

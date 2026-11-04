@@ -27,21 +27,15 @@ export default function SettingsView({
     <div style={{ maxWidth: '720px', margin: '0 auto' }}>
       <div className="view-header">
         <div className="view-title-wrap">
-          <h2 className="view-main-title">Workspace Settings</h2>
-          <p className="view-sub-desc">
-            Customize workspace profile, appearance theme, and local backups.
-          </p>
+          <h2 className="view-main-title">Settings</h2>
         </div>
       </div>
 
       {/* Appearance Theme Selector */}
       <div className="card-panel" style={{ marginBottom: '24px' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '8px', color: 'var(--text-dark)' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: 'var(--text-dark)' }}>
           Appearance Theme
         </h3>
-        <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-          Select between clean Light mode and sleek Dark mode.
-        </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
           <div
@@ -140,9 +134,6 @@ export default function SettingsView({
         <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: 'var(--text-dark)' }}>
           Data Backup & Reset
         </h3>
-        <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-          All your exams, subjects, projects, and courses are saved in your browser's persistent local storage.
-        </p>
 
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button

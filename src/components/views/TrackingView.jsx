@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, Clock, CheckCircle2, Calendar as CalIcon, Flame, Sparkles } from 'lucide-react';
+import { Target, Clock, CheckCircle2, Calendar as CalIcon, Flame, Check } from 'lucide-react';
 
 export default function TrackingView({ upcomingTimeline = [], onToggleTimelineEvent }) {
   const todayFormatted = new Date().toLocaleDateString('en-US', {
@@ -13,13 +13,10 @@ export default function TrackingView({ upcomingTimeline = [], onToggleTimelineEv
   const pendingCount = upcomingTimeline.length - completedCount;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-      <div className="view-header">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      <div className="view-header" style={{ marginBottom: '8px' }}>
         <div className="view-title-wrap">
-          <h2 className="view-main-title">Focus Schedule & Milestone Tracking</h2>
-          <p className="view-sub-desc">
-            Time-blocked daily study sessions, exam countdown milestones, and sprint deliverables.
-          </p>
+          <h2 className="view-main-title">Schedule</h2>
         </div>
       </div>
 
@@ -37,8 +34,9 @@ export default function TrackingView({ upcomingTimeline = [], onToggleTimelineEv
               </span>
             </div>
           </div>
-          <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--primary)', background: 'var(--pill-purple-bg)', padding: '4px 12px', borderRadius: '20px' }}>
-            ● Active Daily Sprint
+          <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--primary)', background: 'var(--pill-purple-bg)', padding: '4px 12px', borderRadius: '20px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <Target size={12} />
+            <span>Active Sprint</span>
           </span>
         </div>
 
@@ -93,8 +91,9 @@ export default function TrackingView({ upcomingTimeline = [], onToggleTimelineEv
                     {item.title}
                   </h4>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '3px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--primary)' }}>
-                      ⏱️ {item.time}
+                    <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <Clock size={11} />
+                      <span>{item.time}</span>
                     </span>
                     <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
                       • {item.category || 'Focus Session'}
@@ -116,17 +115,27 @@ export default function TrackingView({ upcomingTimeline = [], onToggleTimelineEv
                   borderRadius: '14px',
                   background: item.completed ? 'var(--pill-green-bg)' : 'var(--pill-coral-bg)',
                   color: item.completed ? '#20C978' : '#FF754C',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
                 }}
               >
-                {item.completed ? '✓ Completed' : 'Pending Action'}
+                {item.completed ? (
+                  <>
+                    <Check size={11} />
+                    <span>Completed</span>
+                  </>
+                ) : (
+                  <span>Pending</span>
+                )}
               </span>
             </div>
           ))}
 
           {upcomingTimeline.length === 0 && (
             <div style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-muted)', fontSize: '12px' }}>
-              No focus sessions scheduled for today. Add one using the "+ Add New Item" button!
+              No focus sessions scheduled for today. Add one using the Add Item button.
             </div>
           )}
         </div>

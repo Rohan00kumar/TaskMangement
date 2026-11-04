@@ -16,12 +16,16 @@ import {
   LayoutGrid,
   Table as TableIcon,
   CheckCircle2,
+  Check,
   Building2,
   Briefcase,
   Compass,
   Cpu,
   Search,
-  Video
+  Video,
+  Monitor,
+  HelpCircle,
+  AlertTriangle
 } from 'lucide-react';
 import ExamDetailModal from '../modals/ExamDetailModal';
 import { fetchLiveUpcomingExams } from '../../services/liveExamsService';
@@ -140,39 +144,35 @@ export default function ExamsView({
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <Plus size={16} />
-            <span>+ Add Target Exam</span>
+            <span>Add Exam</span>
           </button>
         </div>
       </div>
 
-      {/* Main Header & Metrics Banner */}
-      <div className="exam-hub-header-card">
-        <div className="exam-hub-title-block">
-          <span className="exam-hub-tag">NATIONAL & GLOBAL COMPETITIVE HUB</span>
-          <h2 className="exam-hub-heading">Competitive Examinations & Drives</h2>
-          <p className="exam-hub-sub">
-            Track PSU recruitments, Technical qualifications, Non-Technical Govt exams, and Offcampus hiring drives with real-time countdowns, minimalist syllabus weightages, and open-source updates.
-          </p>
+      {/* Main Header & Metrics */}
+      <div className="view-header" style={{ marginBottom: '4px' }}>
+        <div className="view-title-wrap">
+          <h2 className="view-main-title">Target Exams</h2>
         </div>
+      </div>
 
-        {/* 4 Metric Counter Badges */}
-        <div className="exam-hub-counters-grid">
-          <div className="hub-counter-box psu">
-            <span className="counter-val">{psuCount}</span>
-            <span className="counter-lbl">PSU Recruitments</span>
-          </div>
-          <div className="hub-counter-box tech">
-            <span className="counter-val">{techCount}</span>
-            <span className="counter-lbl">Technical & GATE</span>
-          </div>
-          <div className="hub-counter-box govt">
-            <span className="counter-val">{govtCount}</span>
-            <span className="counter-lbl">Non-Tech Govt</span>
-          </div>
-          <div className="hub-counter-box offcampus">
-            <span className="counter-val">{offcampusCount}</span>
-            <span className="counter-lbl">Offcampus Drives</span>
-          </div>
+      {/* 4 Metric Counter Badges */}
+      <div className="exam-hub-counters-grid">
+        <div className="hub-counter-box psu">
+          <span className="counter-val">{psuCount}</span>
+          <span className="counter-lbl">PSU Recruitments</span>
+        </div>
+        <div className="hub-counter-box tech">
+          <span className="counter-val">{techCount}</span>
+          <span className="counter-lbl">Technical & GATE</span>
+        </div>
+        <div className="hub-counter-box govt">
+          <span className="counter-val">{govtCount}</span>
+          <span className="counter-lbl">Non-Tech Govt</span>
+        </div>
+        <div className="hub-counter-box offcampus">
+          <span className="counter-val">{offcampusCount}</span>
+          <span className="counter-lbl">Offcampus Drives</span>
         </div>
       </div>
 
@@ -272,10 +272,10 @@ export default function ExamsView({
             <Radio size={18} color="#20C978" />
             <div style={{ flex: 1 }}>
               <span style={{ fontWeight: '800', color: 'var(--text-dark)', fontSize: '13px' }}>
-                Open-Source Real-Time Opportunities Radar
+                Open-Source Opportunities Radar
               </span>
               <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                Live updates for PSU recruitments, competitive contests, and offcampus drives across ISRO, BARC, TCS, Infosys, and global platforms. Click "Track in My Exams" to import into your workspace!
+                Live updates for PSU recruitments, competitive contests, and hiring drives.
               </p>
             </div>
           </div>
@@ -293,7 +293,7 @@ export default function ExamsView({
                       {item.category}
                     </span>
                     <span className="live-alert-pill">
-                      ● {item.liveAlert || 'Notification Active'}
+                      {item.liveAlert || 'Notification Active'}
                     </span>
                   </div>
 
@@ -338,7 +338,15 @@ export default function ExamsView({
                       }}
                       disabled={isAlreadyTracked}
                     >
-                      {isAlreadyTracked ? '✓ Tracking in My Exams' : '+ Track in My Exams'}
+                      {isAlreadyTracked ? (
+                        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                          <Check size={13} /> Tracking in Exams
+                        </span>
+                      ) : (
+                        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                          <Plus size={13} /> Track Exam
+                        </span>
+                      )}
                     </button>
 
                     {item.youtubeUrl && (
@@ -455,15 +463,15 @@ export default function ExamsView({
                   <div className="exam-reg-status-pill">
                     {daysToRegEnd !== null && daysToRegEnd > 0 ? (
                       <span style={{ color: '#20C978' }}>
-                        ● Registration Open ({daysToRegEnd} days remaining)
+                        Registration Open ({daysToRegEnd}d left)
                       </span>
                     ) : daysToRegEnd === 0 ? (
                       <span style={{ color: '#FF754C' }}>
-                        ● Registration Closes Today!
+                        Registration Closes Today
                       </span>
                     ) : (
                       <span style={{ color: 'var(--text-muted)' }}>
-                        ● Registration Window Finalized
+                        Registration Window Closed
                       </span>
                     )}
                   </div>
@@ -500,11 +508,17 @@ export default function ExamsView({
 
                 {/* Exam Pattern Specs Chips */}
                 <div className="pattern-chips-row">
-                  <span className="pattern-chip">🖥️ {pattern.mode || 'Online CBT'}</span>
-                  <span className="pattern-chip">⏱️ {pattern.duration || '180m'}</span>
-                  <span className="pattern-chip">❓ {pattern.totalQuestions || '100 Qs'}</span>
+                  <span className="pattern-chip">
+                    <Monitor size={12} /> {pattern.mode || 'Online CBT'}
+                  </span>
+                  <span className="pattern-chip">
+                    <Clock size={12} /> {pattern.duration || '180m'}
+                  </span>
+                  <span className="pattern-chip">
+                    <HelpCircle size={12} /> {pattern.totalQuestions || '100 Qs'}
+                  </span>
                   <span className="pattern-chip" style={{ color: '#FF754C' }}>
-                    ⚠️ {pattern.negativeMarking || '-0.33 Neg'}
+                    <AlertTriangle size={12} /> {pattern.negativeMarking || '-0.33 Neg'}
                   </span>
                 </div>
 
@@ -599,11 +613,12 @@ export default function ExamsView({
                 Add your target PSU, Technical, Non-Technical Govt, or Offcampus exam, or browse the Live Radar Stream to track live notifications.
               </p>
               <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-                <button type="button" className="btn-primary" onClick={onOpenAddExam}>
-                  + Add Target Exam
+                <button type="button" className="btn-primary" onClick={onOpenAddExam} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Plus size={14} />
+                  <span>Add Exam</span>
                 </button>
                 <button type="button" className="btn-secondary" onClick={() => setSelectedCategory('Live')}>
-                  Browse Live Stream →
+                  Browse Live Stream
                 </button>
               </div>
             </div>

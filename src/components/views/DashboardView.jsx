@@ -1,19 +1,13 @@
 import React from 'react';
 import HeroBanner from '../HeroBanner';
 import StatCards from '../StatCards';
-import WorkLineChart from '../WorkLineChart';
-import TaskRingsChart from '../TaskRingsChart';
 import WorkProgress from '../WorkProgress';
-import WorkingStatus from '../WorkingStatus';
 import CalendarCard from '../CalendarCard';
 import UpcomingTimeline from '../UpcomingTimeline';
 
 export default function DashboardView({
   stats,
-  workChart,
-  taskPercentage,
   workProgress,
-  workingStatus,
   upcomingTimeline,
   calendarDate,
   selectedDay,
@@ -45,23 +39,11 @@ export default function DashboardView({
           }}
         />
 
-        {/* Middle Analytics Row: Total work Line Chart + Task Percentage Rings */}
-        <div className="middle-analytics-row">
-          <WorkLineChart data={workChart} />
-          <TaskRingsChart data={taskPercentage} />
-        </div>
-
-        {/* Bottom Analytics Row: Work Progress + Working Status */}
-        <div className="bottom-analytics-row">
-          <WorkProgress
-            items={workProgress}
-            onSeeAll={() => onNavigateTab('projects')}
-          />
-          <WorkingStatus
-            percent={workingStatus?.percent || 70}
-            label={workingStatus?.label || 'Goal Progress'}
-          />
-        </div>
+        {/* Clean Active Focus List (Chart-free, Progress bar-free) */}
+        <WorkProgress
+          items={workProgress}
+          onSeeAll={() => onNavigateTab('projects')}
+        />
       </div>
 
       {/* Right Column (Calendar & Schedule 30%) */}

@@ -64,10 +64,7 @@ export default function CoursesView({
       <div>
         <div className="view-header">
           <div className="view-title-wrap">
-            <h2 className="view-main-title">Skillset Matrix & Proficiencies</h2>
-            <p className="view-sub-desc">
-              Track programming languages, frameworks, databases, and core domain competencies.
-            </p>
+            <h2 className="view-main-title">Skills</h2>
           </div>
         </div>
 
@@ -172,10 +169,7 @@ export default function CoursesView({
       <div>
         <div className="view-header">
           <div className="view-title-wrap">
-            <h2 className="view-main-title">Courses & Certifications</h2>
-            <p className="view-sub-desc">
-              Organize self-paced video lectures, university courses, and verified credential certificates.
-            </p>
+            <h2 className="view-main-title">Courses</h2>
           </div>
           <button
             type="button"
@@ -184,7 +178,7 @@ export default function CoursesView({
             style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <Plus size={16} />
-            <span>+ Add Course</span>
+            <span>Add Course</span>
           </button>
         </div>
 
@@ -270,9 +264,10 @@ export default function CoursesView({
                 type="button"
                 className="btn-primary"
                 onClick={onOpenAddCourse}
-                style={{ marginTop: '14px' }}
+                style={{ marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
               >
-                + Add Course
+                <Plus size={14} />
+                <span>Add Course</span>
               </button>
             </div>
           )}
