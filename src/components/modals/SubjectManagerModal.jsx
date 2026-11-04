@@ -22,6 +22,7 @@ export default function SubjectManagerModal({
 
   const [subjects, setSubjects] = useState(exam.subjects || []);
   const [subName, setSubName] = useState('');
+  const [subCategory, setSubCategory] = useState(exam.category === 'Non Technical' ? 'General Foundations' : 'Core Technical Discipline');
   const [subWeight, setSubWeight] = useState(15);
   const [subStatus, setSubStatus] = useState('in_progress');
   const [selectedPresetId, setSelectedPresetId] = useState('');
@@ -42,6 +43,7 @@ export default function SubjectManagerModal({
     const newSub = {
       id: `sub-${Date.now()}`,
       name: subName.trim(),
+      category: subCategory,
       weightage: Number(subWeight) || 10,
       status: subStatus
     };
@@ -82,6 +84,7 @@ export default function SubjectManagerModal({
     const mapped = preset.subjects.map((s, idx) => ({
       id: `sub-${Date.now()}-${idx}`,
       name: s.name,
+      category: s.category || (exam.category === 'Non Technical' ? 'General Foundations' : 'Core Technical Discipline'),
       weightage: s.weightage,
       status: s.status || 'in_progress'
     }));
@@ -118,14 +121,14 @@ export default function SubjectManagerModal({
             <div className="summary-chip">
               <span className="summary-chip-label">TOTAL WEIGHT</span>
               <span className={`summary-chip-value ${totalWeight === 100 ? 'balanced' : ''}`}>
-                {totalWeight}% {totalWeight === 100 ? '• Balanced' : ''}
+                {totalWeight}% {totalWeight === 100 ? '(Balanced)' : ''}
               </span>
             </div>
 
             <div className="summary-chip">
               <span className="summary-chip-label">STATUS BREAKDOWN</span>
               <span className="summary-chip-value">
-                <span style={{ color: '#20C978' }}>{completedCount} Done</span> • <span style={{ color: 'var(--primary)' }}>{inProgressCount} Active</span>
+                <span style={{ color: '#20C978' }}>{completedCount} Done</span> | <span style={{ color: 'var(--primary)' }}>{inProgressCount} Active</span>
               </span>
             </div>
 
@@ -186,15 +189,27 @@ export default function SubjectManagerModal({
             <input
               type="text"
               required
-              placeholder="Subject name (e.g. Data Structures, OS, Reasoning)..."
+              placeholder="Topic / Subject name (e.g. Data Structures, OS, Reasoning)..."
               value={subName}
               onChange={(e) => setSubName(e.target.value)}
               className="form-input"
               style={{ flex: 2, minWidth: '160px' }}
             />
 
+            <select
+              value={subCategory}
+              onChange={(e) => setSubCategory(e.target.value)}
+              className="form-select"
+              style={{ width: '150px' }}
+            >
+              <option value="Core Technical Discipline">Core Technical</option>
+              <option value="Engineering Mathematics">Mathematics</option>
+              <option value="General Aptitude & Reasoning">Aptitude & Logic</option>
+              <option value="Specialized Domain">Specialized</option>
+            </select>
+
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ position: 'relative', width: '85px' }}>
+              <div style={{ position: 'relative', width: '80px' }}>
                 <input
                   type="number"
                   min="1"
@@ -215,7 +230,7 @@ export default function SubjectManagerModal({
                 value={subStatus}
                 onChange={(e) => setSubStatus(e.target.value)}
                 className="form-select"
-                style={{ width: '120px' }}
+                style={{ width: '110px' }}
               >
                 <option value="to_study">To Study</option>
                 <option value="in_progress">In Progress</option>
@@ -269,6 +284,11 @@ export default function SubjectManagerModal({
                   <span className="minimal-subject-name" title={s.name}>
                     {s.name}
                   </span>
+                  {s.category && (
+                    <span className="minimal-topic-chip" style={{ fontSize: '9.5px' }}>
+                      {s.category}
+                    </span>
+                  )}
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>

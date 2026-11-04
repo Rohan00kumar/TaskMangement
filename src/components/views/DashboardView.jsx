@@ -1,14 +1,14 @@
 import React from 'react';
 import HeroBanner from '../HeroBanner';
 import StatCards from '../StatCards';
-import WorkProgress from '../WorkProgress';
+import ActiveApplications from '../ActiveApplications';
 import CalendarCard from '../CalendarCard';
 import UpcomingTimeline from '../UpcomingTimeline';
 
 export default function DashboardView({
   stats,
-  workProgress,
-  upcomingTimeline,
+  exams = [],
+  upcomingTimeline = [],
   calendarDate,
   selectedDay,
   onSelectDay,
@@ -16,7 +16,8 @@ export default function DashboardView({
   onNextMonth,
   onToggleTimelineEvent,
   onNavigateTab,
-  onOpenAddModal
+  onOpenAddModal,
+  onViewExam
 }) {
   return (
     <div className="dashboard-grid">
@@ -33,16 +34,17 @@ export default function DashboardView({
           stats={stats}
           onSelectStat={(statId) => {
             if (statId === 'total') onNavigateTab('projects');
-            if (statId === 'in_progress') onNavigateTab('tracking');
-            if (statId === 'pending') onNavigateTab('exams');
+            if (statId === 'in_progress') onNavigateTab('exams');
+            if (statId === 'pending') onNavigateTab('tracking');
             if (statId === 'completed') onNavigateTab('courses');
           }}
         />
 
-        {/* Clean Active Focus List (Chart-free, Progress bar-free) */}
-        <WorkProgress
-          items={workProgress}
-          onSeeAll={() => onNavigateTab('projects')}
+        {/* Active Application Forms (Live Registration Only - Clean & Actionable) */}
+        <ActiveApplications
+          exams={exams}
+          onViewExam={onViewExam}
+          onSeeAll={() => onNavigateTab('exams')}
         />
       </div>
 

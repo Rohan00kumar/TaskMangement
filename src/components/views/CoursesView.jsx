@@ -217,7 +217,7 @@ export default function CoursesView({
                 <div>
                   <h3 className="exam-title-pro">{c.title}</h3>
                   <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Instructor: <b>{c.instructor || 'Self-Paced'}</b> • {c.category || 'General'}
+                    Instructor: <b>{c.instructor || 'Self-Paced'}</b> | {c.category || 'General'}
                   </p>
                 </div>
 

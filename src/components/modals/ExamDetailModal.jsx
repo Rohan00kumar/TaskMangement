@@ -13,8 +13,10 @@ import {
   Layers,
   Video,
   RotateCw,
-  Sparkles
+  Sparkles,
+  BookOpen
 } from 'lucide-react';
+import { getDaysDiff, formatDisplayDate } from '../../utils/dateUtils';
 
 export default function ExamDetailModal({
   isOpen,
@@ -24,25 +26,24 @@ export default function ExamDetailModal({
 }) {
   if (!isOpen || !exam) return null;
 
-  // Calculate days to exam
-  const getDays = (dateStr) => {
-    if (!dateStr) return null;
-    const diff = new Date(dateStr) - new Date();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? days : 0;
-  };
-
-  const daysToExam = getDays(exam.examDate);
-  const daysToRegEnd = getDays(exam.registrationEnd || exam.regEnd);
+  const daysToExam = getDaysDiff(exam.examDate);
+  const daysToRegEnd = getDaysDiff(exam.registrationEnd || exam.regEnd);
   const targetBuffer = (exam.targetMarks || 0) - (exam.cutoffMarks || 0);
 
-  // Subject statistics (minimalist, no progress bars)
+  // Subjects statistics
   const subjects = exam.subjects || [];
   const totalWeight = subjects.reduce((sum, s) => sum + (Number(s.weightage) || 0), 0);
   const completedCount = subjects.filter((s) => s.status === 'completed').length;
   const inProgressCount = subjects.filter((s) => s.status === 'in_progress').length;
 
-  // Category styling
+  // Category-wise Syllabus Grouping
+  const categorizedSubjects = subjects.reduce((acc, sub) => {
+    const cat = sub.category || (exam.category === 'Non Technical' ? 'General Foundations' : 'Core Discipline');
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(sub);
+    return acc;
+  }, {});
+
   const catColor =
     exam.category === 'PSU' ? '#FF754C' :
     exam.category === 'Technical' ? '#6C5DD3' :
@@ -64,7 +65,7 @@ export default function ExamDetailModal({
     <div className="modal-overlay" onClick={onClose}>
       <div
         className="modal-content-card"
-        style={{ maxWidth: '780px', maxHeight: '92vh' }}
+        style={{ maxWidth: '820px', maxHeight: '92vh', overflowY: 'auto' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -85,7 +86,7 @@ export default function ExamDetailModal({
               >
                 {exam.category}
               </span>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>
+              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600' }}>
                 {exam.organization || exam.examType || 'National Examination'}
               </span>
             </div>
@@ -102,32 +103,32 @@ export default function ExamDetailModal({
         <div className="exam-blueprint-timeline">
           <div className="timeline-step">
             <span className="step-label">REGISTRATION OPENS</span>
-            <span className="step-value">{exam.registrationStart || exam.regStart || 'Announced'}</span>
+            <span className="step-value">{formatDisplayDate(exam.registrationStart || exam.regStart)}</span>
           </div>
           <div className="timeline-step-arrow">→</div>
           <div className="timeline-step active">
             <span className="step-label">REGISTRATION CLOSES</span>
             <span className="step-value" style={{ color: '#FF754C', fontWeight: '800' }}>
-              {exam.registrationEnd || exam.regEnd || 'Pending'}
-              {daysToRegEnd !== null && ` (${daysToRegEnd}d left)`}
+              {formatDisplayDate(exam.registrationEnd || exam.regEnd)}
+              {daysToRegEnd !== null && ` (${daysToRegEnd >= 0 ? `${daysToRegEnd}d left` : 'Window Closed'})`}
             </span>
           </div>
           <div className="timeline-step-arrow">→</div>
           <div className="timeline-step target">
-            <span className="step-label">EXAM DATE</span>
+            <span className="step-label">EXAM SCHEDULED</span>
             <span className="step-value" style={{ color: 'var(--primary)', fontWeight: '800' }}>
-              {exam.examDate || 'Scheduled'}
-              {daysToExam !== null && ` (${daysToExam}d countdown)`}
+              {formatDisplayDate(exam.examDate)}
+              {daysToExam !== null && ` (${daysToExam >= 0 ? `${daysToExam}d countdown` : 'Concluded'})`}
             </span>
           </div>
         </div>
 
         {/* Exam Pattern & Mode Specifications */}
         <div>
-          <h4 style={{ fontSize: '12.5px', fontWeight: '800', color: 'var(--text-dark)', marginBottom: '10px' }}>
+          <h4 style={{ fontSize: '13px', fontWeight: '800', color: 'var(--text-dark)', marginBottom: '10px' }}>
             Pattern & Evaluation Specifications
           </h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
             <div className="pattern-spec-box">
               <span className="spec-label">EXAM MODE</span>
               <span className="spec-value">{pattern.mode || 'Online CBT'}</span>
@@ -149,7 +150,7 @@ export default function ExamDetailModal({
           </div>
         </div>
 
-        {/* Minimalist Cutoff Benchmark vs Target Score Metric (No bulky progress bar) */}
+        {/* Score Benchmark Metrics (No chunky progress bars) */}
         <div className="minimal-cutoff-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
             <div>
@@ -189,17 +190,20 @@ export default function ExamDetailModal({
           </div>
         </div>
 
-        {/* Minimalist Subjects & Weightages Breakdown (Clean chips, NO progress bars) */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+        {/* ===================================================================
+            CATEGORY-WISE SYLLABUS & MARKS WEIGHTAGE BREAKDOWN
+            =================================================================== */}
+        <div className="category-syllabus-section">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
             <div>
-              <h4 style={{ fontSize: '13px', fontWeight: '800', color: 'var(--text-dark)' }}>
-                Syllabus Topics & Marks Allocation
+              <h4 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-dark)' }}>
+                Category-Wise Syllabus & Weightage Breakdown
               </h4>
-              <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                {subjects.length} Topics ({completedCount} Completed • {inProgressCount} In Progress) • Total Weight: {totalWeight}%
-              </p>
+              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
+                {subjects.length} Topics across {Object.keys(categorizedSubjects).length} Academic Categories | Total Weight: {totalWeight}%
+              </span>
             </div>
+
             {onOpenManageSubjects && (
               <button
                 type="button"
@@ -211,54 +215,78 @@ export default function ExamDetailModal({
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
               >
                 <Layers size={13} />
-                <span>Edit Topics</span>
+                <span>Customize Topics</span>
               </button>
             )}
           </div>
 
-          {/* Minimalist Topic Rows (Clean typography and status pills) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {subjects.map((s) => {
-              const statusBadge =
-                s.status === 'completed'
-                  ? { label: 'Completed', bg: 'var(--pill-green-bg)', color: '#20C978' }
-                  : s.status === 'to_study'
-                  ? { label: 'To Study', bg: 'var(--bg-card-subtle)', color: 'var(--text-muted)' }
-                  : s.status === 'revision'
-                  ? { label: 'In Revision', bg: 'var(--pill-coral-bg)', color: '#FF754C' }
-                  : { label: 'In Progress', bg: 'var(--pill-purple-bg)', color: 'var(--primary)' };
+          {/* Render Each Category Group */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {Object.entries(categorizedSubjects).map(([categoryName, subList]) => {
+              const catTotalWeight = subList.reduce((sum, s) => sum + (Number(s.weightage) || 0), 0);
 
               return (
-                <div key={s.id} className="minimal-subject-tile">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-                    <span
-                      style={{
-                        fontSize: '10.5px',
-                        fontWeight: '700',
-                        padding: '3px 8px',
-                        borderRadius: '12px',
-                        backgroundColor: statusBadge.bg,
-                        color: statusBadge.color,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      {statusBadge.label}
-                    </span>
-                    <span style={{ fontSize: '12.5px', fontWeight: '700', color: 'var(--text-dark)' }}>
-                      {s.name}
+                <div key={categoryName} className="syllabus-category-card">
+                  {/* Category Header */}
+                  <div className="syllabus-category-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <BookOpen size={14} color="var(--primary)" />
+                      <span className="syllabus-category-title">
+                        {categoryName}
+                      </span>
+                    </div>
+                    <span className="syllabus-category-weight-badge">
+                      {catTotalWeight}% Total Weight
                     </span>
                   </div>
 
-                  <span className="minimal-weight-tag">
-                    {s.weightage}% Weight
-                  </span>
+                  {/* Subtopics List */}
+                  <div className="syllabus-topics-list">
+                    {subList.map((s) => {
+                      const statusBadge =
+                        s.status === 'completed'
+                          ? { label: 'Completed', bg: 'var(--pill-green-bg)', color: '#20C978' }
+                          : s.status === 'to_study'
+                          ? { label: 'To Study', bg: 'var(--bg-card-subtle)', color: 'var(--text-muted)' }
+                          : s.status === 'revision'
+                          ? { label: 'In Revision', bg: 'var(--pill-coral-bg)', color: '#FF754C' }
+                          : { label: 'In Progress', bg: 'var(--pill-purple-bg)', color: 'var(--primary)' };
+
+                      return (
+                        <div key={s.id} className="minimal-subject-tile">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
+                            <span
+                              style={{
+                                fontSize: '10.5px',
+                                fontWeight: '700',
+                                padding: '3px 8px',
+                                borderRadius: '12px',
+                                backgroundColor: statusBadge.bg,
+                                color: statusBadge.color,
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              {statusBadge.label}
+                            </span>
+                            <span style={{ fontSize: '12.5px', fontWeight: '700', color: 'var(--text-dark)' }}>
+                              {s.name}
+                            </span>
+                          </div>
+
+                          <span className="minimal-weight-tag">
+                            {s.weightage}% Weight
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               );
             })}
 
             {subjects.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '16px', color: 'var(--text-muted)', fontSize: '12px' }}>
-                No subjects assigned yet. Click "Edit Subjects" to auto-load syllabus topics.
+              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '12px' }}>
+                No syllabus topics assigned yet. Click "Customize Topics" to auto-load standard syllabus.
               </div>
             )}
           </div>
@@ -266,7 +294,7 @@ export default function ExamDetailModal({
 
         {/* Syllabus Scope Overview */}
         {exam.syllabusSummary && (
-          <div style={{ background: 'var(--bg-card-subtle)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+          <div style={{ background: 'var(--bg-card-subtle)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', marginTop: '6px' }}>
             <span style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
               OFFICIAL SYLLABUS SCOPE
             </span>
@@ -285,7 +313,7 @@ export default function ExamDetailModal({
               rel="noreferrer"
               className="btn-secondary"
               style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#FF0000', borderColor: 'rgba(255,0,0,0.2)' }}
-              title="Watch Free Preparation Video Guides & Notifications"
+              title="Watch Preparation Strategy Guide"
             >
               <Video size={14} color="#FF0000" />
               <span>Watch Prep & Strategy Guide</span>
@@ -306,7 +334,7 @@ export default function ExamDetailModal({
           )}
 
           <button type="button" className="btn-primary" onClick={onClose} style={{ marginLeft: 'auto' }}>
-            Close Blueprint
+            Close Details
           </button>
         </div>
       </div>

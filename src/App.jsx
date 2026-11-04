@@ -17,8 +17,9 @@ import SettingsView from './components/views/SettingsView';
 // Modals
 import AddTaskModal from './components/modals/AddTaskModal';
 import SubjectManagerModal from './components/modals/SubjectManagerModal';
+import ExamDetailModal from './components/modals/ExamDetailModal';
 
-const STORAGE_KEY = 'pathflow_workspace_data_v4';
+const STORAGE_KEY = 'pathflow_workspace_data_v5';
 const THEME_KEY = 'pathflow_theme_mode';
 
 export default function App() {
@@ -55,6 +56,7 @@ export default function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [addModalInitialCategory, setAddModalInitialCategory] = useState('exam');
   const [subjectManagerExam, setSubjectManagerExam] = useState(null);
+  const [selectedExamForDetail, setSelectedExamForDetail] = useState(null);
 
   // Sync Theme to body class and localStorage
   useEffect(() => {
@@ -122,7 +124,7 @@ export default function App() {
   };
 
   // =========================================================================
-  // DYNAMIC STATS & CHARTS COMPUTATION (REAL LIVE DATA)
+  // DYNAMIC STATS (CLEAN KPI METRICS - NO CHARTS OR PROGRESS PERCENTAGES)
   // =========================================================================
   const dynamicMetrics = useMemo(() => {
     const exams = data.exams || [];
@@ -135,14 +137,14 @@ export default function App() {
 
     // In Progress Count
     const inProgressCount =
-      exams.filter((e) => e.status === 'in_preparation').length +
+      exams.filter((e) => e.status === 'registering' || e.status === 'in_preparation').length +
       projects.filter((p) => p.status === 'in_progress').length +
       courses.filter((c) => c.status === 'in_progress').length +
       timeline.filter((t) => !t.completed).length;
 
     // Pending Count
     const pendingCount =
-      exams.filter((e) => e.status === 'registering' || e.status === 'upcoming').length +
+      exams.filter((e) => e.status === 'upcoming').length +
       projects.filter((p) => p.status === 'ideation').length +
       courses.filter((c) => c.status === 'wishlist').length;
 
@@ -153,67 +155,12 @@ export default function App() {
       courses.filter((c) => c.status === 'completed').length +
       timeline.filter((t) => t.completed).length;
 
-    // Overall Completion Percentage
-    const completionPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-
-    // Concentric Ring Percentages
-    const ringTotal = 100;
-    const ringRunning = totalCount > 0 ? Math.round((inProgressCount / totalCount) * 100) : 0;
-    const ringPending = totalCount > 0 ? Math.round((pendingCount / totalCount) * 100) : 0;
-
-    const taskPercentageData = [
-      { label: 'Total Items', count: totalCount, percent: ringTotal, color: '#6C5DD3' },
-      { label: 'Running / Active', count: inProgressCount, percent: ringRunning, color: '#00C5FF' },
-      { label: 'Pending Action', count: pendingCount, percent: ringPending, color: '#FF754C' }
-    ];
-
-    // Real Ongoing Work Progress Items
-    const activeProgressItems = [];
-
-    // Add active exams
-    exams.forEach((ex) => {
-      const totalWeight = (ex.subjects || []).reduce((sum, s) => sum + (Number(s.weightage) || 0), 0);
-      const getSubjectScore = (s) => (s.status === 'completed' ? 100 : s.status === 'revision' ? 85 : s.status === 'in_progress' ? 50 : 0);
-      const weightedProg = totalWeight > 0
-        ? Math.round(ex.subjects.reduce((sum, s) => sum + getSubjectScore(s) * (Number(s.weightage) || 0), 0) / totalWeight)
-        : 40;
-
-      activeProgressItems.push({
-        id: `wp-${ex.id}`,
-        type: 'Target Exam',
-        title: ex.title,
-        progress: weightedProg,
-        startDate: ex.registrationStart || ex.regStart ? new Date(ex.registrationStart || ex.regStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Jan',
-        endDate: ex.examDate ? new Date(ex.examDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Ongoing',
-        accentColor: '#6C5DD3'
-      });
-    });
-
-    // Add active projects
-    projects.filter((p) => p.projectType === 'current').forEach((p) => {
-      activeProgressItems.push({
-        id: `wp-${p.id}`,
-        type: 'Active Project',
-        title: p.title,
-        progress: p.status === 'deployed' ? 100 : p.status === 'completed' ? 100 : 65,
-        startDate: 'Jan',
-        endDate: 'Target Q2',
-        accentColor: '#00C5FF'
-      });
-    });
-
     return {
       stats: {
         totalTask: totalCount,
         inProgress: inProgressCount,
         pending: pendingCount,
         completed: completedCount
-      },
-      taskPercentage: taskPercentageData,
-      workProgress: activeProgressItems,
-      workingStatus: {
-        percent: completionPercent > 0 ? completionPercent : 70,
-        label: 'Goal Progress'
       }
     };
   }, [data]);
@@ -418,10 +365,7 @@ export default function App() {
         {activeTab === 'dashboard' && (
           <DashboardView
             stats={dynamicMetrics.stats}
-            workChart={data.workChart}
-            taskPercentage={dynamicMetrics.taskPercentage}
-            workProgress={dynamicMetrics.workProgress}
-            workingStatus={dynamicMetrics.workingStatus}
+            exams={data.exams}
             upcomingTimeline={data.upcomingTimeline}
             calendarDate={calendarDate}
             selectedDay={selectedDay}
@@ -431,6 +375,7 @@ export default function App() {
             onToggleTimelineEvent={handleToggleTimelineEvent}
             onNavigateTab={setActiveTab}
             onOpenAddModal={handleOpenAddModal}
+            onViewExam={(exam) => setSelectedExamForDetail(exam)}
           />
         )}
 
@@ -501,6 +446,13 @@ export default function App() {
           handleUpdateExamSubjects(examId, updatedSubs);
           setSubjectManagerExam((prev) => (prev ? { ...prev, subjects: updatedSubs } : null));
         }}
+      />
+
+      <ExamDetailModal
+        isOpen={Boolean(selectedExamForDetail)}
+        onClose={() => setSelectedExamForDetail(null)}
+        exam={selectedExamForDetail}
+        onOpenManageSubjects={(exam) => setSubjectManagerExam(exam)}
       />
     </div>
   );

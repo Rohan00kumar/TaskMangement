@@ -30,7 +30,7 @@ export default function TrackingView({ upcomingTimeline = [], onToggleTimelineEv
                 {todayFormatted}
               </h3>
               <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                {completedCount} Completed • {pendingCount} Pending Sessions
+                {completedCount} Completed | {pendingCount} Pending Sessions
               </span>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function TrackingView({ upcomingTimeline = [], onToggleTimelineEv
                       <span>{item.time}</span>
                     </span>
                     <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
-                      • {item.category || 'Focus Session'}
+                      {item.category || 'Focus Session'}
                     </span>
                     {item.tag && (
                       <span className="minimal-topic-chip" style={{ fontSize: '10px', padding: '1px 6px' }}>

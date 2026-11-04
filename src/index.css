@@ -2439,6 +2439,261 @@ body {
 }
 
 /* =========================================================================
+   ACTIVE APPLICATION FORMS (DASHBOARD LIVE ONLY WIDGET)
+   ========================================================================= */
+.active-apps-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.active-apps-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.live-pulse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--pill-green-bg);
+  color: #20C978;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.live-count-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-card-subtle);
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.btn-text-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  transition: opacity 0.2s;
+}
+
+.btn-text-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.2px;
+}
+
+.section-subtitle {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.active-apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.active-app-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.active-app-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.active-app-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.active-app-org {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.deadline-urgent-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--pill-coral-bg);
+  color: #FF754C;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.active-app-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 10px 0 12px;
+  line-height: 1.35;
+}
+
+.active-app-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg-card-subtle);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.date-metric-tile {
+  display: flex;
+  flex-direction: column;
+}
+
+.tile-sublabel {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.tile-mainvalue {
+  font-size: 11.5px;
+  font-weight: 800;
+  margin-top: 1px;
+}
+
+.tile-mainvalue.deadline {
+  color: #FF754C;
+}
+
+.tile-mainvalue.exam {
+  color: var(--primary);
+}
+
+.active-app-benchmarks {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.bench-pill {
+  font-size: 10.5px;
+  font-weight: 600;
+  background: var(--bg-card-subtle);
+  color: var(--text-dark);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.bench-pill.target {
+  font-weight: 800;
+  color: #20C978;
+}
+
+.active-app-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.active-apps-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-card-subtle);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border);
+}
+
+/* =========================================================================
+   CATEGORY-WISE SYLLABUS & WEIGHTAGE STYLING
+   ========================================================================= */
+.category-syllabus-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.syllabus-category-card {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.syllabus-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.syllabus-category-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.syllabus-category-weight-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary);
+  background: var(--pill-purple-bg);
+  padding: 3px 10px;
+  border-radius: 14px;
+}
+
+.syllabus-topics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* =========================================================================
    RESPONSIVE AUTO-ADJUSTMENT ACROSS ALL SCREENS
    ========================================================================= */
 @media (max-width: 1100px) {

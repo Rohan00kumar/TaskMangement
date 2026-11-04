@@ -122,7 +122,7 @@ export default function ExamsView({
               LIVE EXAM RADAR ACTIVE
             </span>
           </div>
-          <span className="radar-synced-time">• Synced: {lastSyncedTime}</span>
+          <span className="radar-synced-time">Synced: {lastSyncedTime}</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
@@ -299,7 +299,7 @@ export default function ExamsView({
 
                   <h3 className="exam-title-pro" style={{ marginTop: '4px' }}>{item.title}</h3>
                   <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    {item.organization} • {item.examType}
+                    {item.organization} | {item.examType}
                   </p>
 
                   {/* Dates Box */}
@@ -541,62 +541,26 @@ export default function ExamsView({
                   </span>
                 </div>
 
-                {/* Minimalist Syllabus & Topics Summary (Clean Chips, NO progress bars) */}
-                <div className="minimal-card-syllabus-block">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-dark)' }}>
-                      Syllabus Topics ({subjects.length})
-                    </span>
-                    <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
-                      <b style={{ color: '#20C978' }}>{completedSubs} Done</b> • <b style={{ color: 'var(--primary)' }}>{inProgressSubs} Active</b>
-                    </span>
-                  </div>
-
-                  {/* Clean Topic Pills Preview */}
-                  <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                    {subjects.slice(0, 3).map((s) => (
-                      <span
-                        key={s.id}
-                        className="minimal-topic-chip"
-                        style={{
-                          backgroundColor: s.status === 'completed' ? 'var(--pill-green-bg)' : 'var(--bg-card-subtle)',
-                          color: s.status === 'completed' ? 'var(--pill-green-text)' : 'var(--text-dark)'
-                        }}
-                      >
-                        {s.name} ({s.weightage}%)
-                      </span>
-                    ))}
-                    {subjects.length > 3 && (
-                      <span className="minimal-topic-chip more" onClick={() => setSelectedExamDetail(exam)}>
-                        +{subjects.length - 3} more
-                      </span>
-                    )}
-                    {subjects.length === 0 && (
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                        No topics assigned yet.
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Card Action Buttons */}
+                {/* Card Action Buttons - Clean & Focused */}
                 <div className="exam-card-pro-actions">
                   <button
                     type="button"
-                    className="btn-action-outline"
+                    className="btn-action-primary"
                     onClick={() => setSelectedExamDetail(exam)}
+                    style={{ flex: 1 }}
                   >
                     <FileText size={13} />
-                    <span>View Blueprint</span>
+                    <span>Details & Syllabus</span>
                   </button>
 
                   <button
                     type="button"
-                    className="btn-action-primary"
+                    className="btn-action-outline"
                     onClick={() => onOpenManageSubjects && onOpenManageSubjects(exam)}
+                    title="Customize Topics"
                   >
                     <Layers size={13} />
-                    <span>Syllabus Topics</span>
+                    <span>Topics</span>
                   </button>
                 </div>
               </div>
@@ -709,7 +673,7 @@ export default function ExamsView({
                           type="button"
                           className="icon-arrow-btn"
                           onClick={() => setSelectedExamDetail(exam)}
-                          title="View Blueprint"
+                          title="Details & Syllabus"
                         >
                           <FileText size={13} />
                         </button>

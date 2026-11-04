@@ -1,20 +1,12 @@
-// Default storage seed data for PathFlow
+import { getRelativeDate } from '../utils/dateUtils';
+
+// Correlated future storage seed data for PathFlow
 export const initialData = {
   user: {
     name: "Rohan Kumar",
     role: "Full Stack Builder & Student",
     brandName: "PathFlow",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&h=160&q=80"
-  },
-
-  // 6-Month Work History Chart (Task Activity Trend)
-  workChart: {
-    period: "6 Month",
-    months: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov"],
-    values: [35, 48, 42, 60, 72, 58],
-    tooltipIndex: 4, // Oct/Nov highlight
-    label: "Tasks",
-    granularity: "Weekly"
   },
 
   // Upcoming Focus Sessions & Milestones
@@ -31,7 +23,7 @@ export const initialData = {
     },
     {
       id: "ev-2",
-      title: "Full-Stack SaaS Landing Page Design",
+      title: "Full-Stack SaaS Architecture Review",
       time: "11:30 AM",
       assignees: "Self Focus",
       accent: "coral",
@@ -62,22 +54,23 @@ export const initialData = {
   ],
 
   // =========================================================================
-  // PILLAR 1: TARGET EXAMS & SUBJECT WEIGHTAGES
+  // PILLAR 1: TARGET EXAMS & CATEGORIZED SUBJECT WEIGHTAGES
+  // Dates are fully correlated with today's real date (Live now + Future targets)
   // =========================================================================
   exams: [
     {
-      id: "exam-isro-2026",
-      title: "ISRO Scientist / Engineer 'SC' (ICRB)",
+      id: "exam-isro-2027",
+      title: "ISRO Scientist / Engineer 'SC' (ICRB Recruitment)",
       category: "PSU",
       organization: "Indian Space Research Organisation",
       examType: "Central PSU Direct Recruitment",
-      examDate: "2026-05-18",
-      registrationStart: "2026-03-01",
-      registrationEnd: "2026-03-24",
+      registrationStart: getRelativeDate(-8), // Registration opened 8 days ago
+      registrationEnd: getRelativeDate(18),   // Closes in 18 days (LIVE NOW!)
+      examDate: getRelativeDate(75),          // Exam in 75 days
       totalMarks: 100,
       cutoffMarks: 68.0,
       targetMarks: 85.0,
-      status: "in_preparation",
+      status: "registering",
       priority: "high",
       websiteUrl: "https://www.isro.gov.in/careers",
       youtubeUrl: "https://www.youtube.com/results?search_query=isro+scientist+sc+exam+preparation+strategy",
@@ -90,53 +83,22 @@ export const initialData = {
       marksDistribution: "Core Discipline (80 Marks), Aptitude & Reasoning (20 Marks)",
       syllabusSummary: "Computer Organization, Discrete Math, Data Structures, Algorithms, OS, Networks, DBMS, Compilers.",
       subjects: [
-        { id: "isro-s1", name: "Core Technical Computer Science", weightage: 80, status: "in_progress" },
-        { id: "isro-s2", name: "General Aptitude & Reasoning", weightage: 20, status: "completed" }
+        { id: "isro-s1", name: "Computer Organization & Architecture", category: "Core Technical Discipline", weightage: 20, status: "in_progress" },
+        { id: "isro-s2", name: "Data Structures & Algorithms", category: "Core Technical Discipline", weightage: 25, status: "completed" },
+        { id: "isro-s3", name: "Operating Systems & Concurrency", category: "Core Technical Discipline", weightage: 20, status: "in_progress" },
+        { id: "isro-s4", name: "Databases & Computer Networks", category: "Core Technical Discipline", weightage: 15, status: "to_study" },
+        { id: "isro-s5", name: "General Aptitude & Logical Reasoning", category: "General Aptitude & Reasoning", weightage: 20, status: "completed" }
       ]
     },
     {
-      id: "exam-gate-2027",
-      title: "GATE Computer Science & IT (GATE CS 2027)",
-      category: "Technical",
-      organization: "IIT / IISc National Coordination Board",
-      examType: "National Competitive Exam & PSU Gateway",
-      examDate: "2027-02-13",
-      registrationStart: "2026-08-25",
-      registrationEnd: "2026-10-05",
-      totalMarks: 100,
-      cutoffMarks: 32.5,
-      targetMarks: 75.0,
-      status: "in_preparation",
-      priority: "high",
-      websiteUrl: "https://gate2026.iit.ac.in",
-      youtubeUrl: "https://www.youtube.com/results?search_query=gate+computer+science+complete+preparation+roadmap",
-      examPattern: {
-        mode: "Online CBT",
-        duration: "180 Mins (3 Hours)",
-        totalQuestions: "65 Questions (MCQ, MSQ, NAT)",
-        negativeMarking: "-0.33 for 1-mark, -0.66 for 2-mark MCQs"
-      },
-      marksDistribution: "Core CS (70 Marks), Engg Math & Discrete (15 Marks), General Aptitude (15 Marks)",
-      syllabusSummary: "Algorithms, Data Structures, Operating Systems, DBMS, Computer Networks, Theory of Computation, Compilers, Architecture, Discrete Math.",
-      subjects: [
-        { id: "sub-1", name: "Data Structures & Algorithms", weightage: 16, status: "completed" },
-        { id: "sub-2", name: "Computer Networks & Security", weightage: 10, status: "in_progress" },
-        { id: "sub-3", name: "Operating Systems & Concurrency", weightage: 10, status: "in_progress" },
-        { id: "sub-4", name: "Theory of Computation & Compilers", weightage: 12, status: "to_study" },
-        { id: "sub-5", name: "Engineering Mathematics & Discrete", weightage: 28, status: "revision" },
-        { id: "sub-6", name: "Databases (DBMS & SQL)", weightage: 10, status: "completed" },
-        { id: "sub-7", name: "General Aptitude & Reasoning", weightage: 14, status: "completed" }
-      ]
-    },
-    {
-      id: "exam-tcs-nqt",
-      title: "TCS National Qualifier Test (NQT Ninja & Digital)",
+      id: "exam-tcs-nqt-2027",
+      title: "TCS National Qualifier Test (NQT Ninja & Digital Cadre)",
       category: "Offcampus",
       organization: "Tata Consultancy Services (TCS iON)",
-      examType: "National Industry Off-Campus Hiring",
-      examDate: "2026-05-02",
-      registrationStart: "2026-03-10",
-      registrationEnd: "2026-04-15",
+      examType: "National Industry Off-Campus Hiring Drive",
+      registrationStart: getRelativeDate(-5), // Registration opened 5 days ago
+      registrationEnd: getRelativeDate(22),   // Closes in 22 days (LIVE NOW!)
+      examDate: getRelativeDate(60),          // Exam in 60 days
       totalMarks: 100,
       cutoffMarks: 65.0,
       targetMarks: 88.0,
@@ -150,28 +112,64 @@ export const initialData = {
         totalQuestions: "82 Questions (Cognitive + 2 Coding)",
         negativeMarking: "No negative marking"
       },
-      marksDistribution: "Advanced Coding (35%), Numerical (25%), Reasoning (25%), Verbal (15%)",
+      marksDistribution: "Advanced Hands-on Coding (35%), Numerical (25%), Reasoning (25%), Verbal (15%)",
       syllabusSummary: "Advanced Hands-on Coding (Python/Java/C++), Quantitative Aptitude, Logical Reasoning, Verbal Ability.",
       subjects: [
-        { id: "tcs-s1", name: "Advanced Hands-on Coding (2 Algorithmic Problems)", weightage: 35, status: "completed" },
-        { id: "tcs-s2", name: "Numerical & Quantitative Aptitude", weightage: 25, status: "in_progress" },
-        { id: "tcs-s3", name: "Logical & Inductive Reasoning", weightage: 25, status: "completed" },
-        { id: "tcs-s4", name: "Verbal Ability & Communication", weightage: 15, status: "completed" }
+        { id: "tcs-s1", name: "Advanced Algorithmic Coding (2 Problems)", category: "Advanced Coding & Development", weightage: 35, status: "completed" },
+        { id: "tcs-s2", name: "Numerical & Quantitative Aptitude", category: "Cognitive & Analytical Foundations", weightage: 25, status: "in_progress" },
+        { id: "tcs-s3", name: "Logical & Inductive Reasoning", category: "Cognitive & Analytical Foundations", weightage: 25, status: "completed" },
+        { id: "tcs-s4", name: "Verbal Ability & Professional Communication", category: "Cognitive & Analytical Foundations", weightage: 15, status: "completed" }
       ]
     },
     {
-      id: "exam-ssc-cgl-2026",
+      id: "exam-gate-2027",
+      title: "GATE Computer Science & Information Technology (GATE CS)",
+      category: "Technical",
+      organization: "IIT / IISc National Coordination Board",
+      examType: "National Competitive Exam & PSU Direct Gateway",
+      registrationStart: getRelativeDate(20), // Opens in 20 days
+      registrationEnd: getRelativeDate(55),   // Closes in 55 days (Upcoming)
+      examDate: getRelativeDate(110),         // Scheduled in 110 days
+      totalMarks: 100,
+      cutoffMarks: 32.5,
+      targetMarks: 75.0,
+      status: "in_preparation",
+      priority: "high",
+      websiteUrl: "https://gate2026.iit.ac.in",
+      youtubeUrl: "https://www.youtube.com/results?search_query=gate+computer+science+complete+preparation+roadmap",
+      examPattern: {
+        mode: "Online CBT (3 Hours)",
+        duration: "180 Mins",
+        totalQuestions: "65 Questions (MCQ, MSQ, NAT)",
+        negativeMarking: "-0.33 for 1-mark, -0.66 for 2-mark MCQs"
+      },
+      marksDistribution: "Core CS (70 Marks), Engg Math & Discrete (15 Marks), General Aptitude (15 Marks)",
+      syllabusSummary: "Algorithms, Data Structures, Operating Systems, DBMS, Computer Networks, Theory of Computation, Compilers, Architecture, Discrete Math.",
+      subjects: [
+        { id: "sub-1", name: "Data Structures & Algorithms", category: "Core Computer Science", weightage: 16, status: "completed" },
+        { id: "sub-2", name: "Operating Systems & Concurrency", category: "Core Computer Science", weightage: 12, status: "in_progress" },
+        { id: "sub-3", name: "Theory of Computation & Compiler Design", category: "Core Computer Science", weightage: 12, status: "to_study" },
+        { id: "sub-4", name: "Computer Networks & Protocol Design", category: "Core Computer Science", weightage: 10, status: "in_progress" },
+        { id: "sub-5", name: "Databases (DBMS & SQL Optimization)", category: "Core Computer Science", weightage: 10, status: "completed" },
+        { id: "sub-6", name: "Computer Organization & Architecture", category: "Core Computer Science", weightage: 10, status: "to_study" },
+        { id: "sub-7", name: "Discrete Mathematics & Combinatorics", category: "Engineering Mathematics", weightage: 10, status: "revision" },
+        { id: "sub-8", name: "Linear Algebra & Probability", category: "Engineering Mathematics", weightage: 5, status: "completed" },
+        { id: "sub-9", name: "General Aptitude & Logical Reasoning", category: "General Aptitude", weightage: 15, status: "completed" }
+      ]
+    },
+    {
+      id: "exam-ssc-cgl-2027",
       title: "SSC Combined Graduate Level (CGL Tier-I)",
       category: "Non Technical",
       organization: "Staff Selection Commission (Govt of India)",
-      examType: "Central Govt Group B & C Recruitment",
-      examDate: "2026-09-15",
-      registrationStart: "2026-06-11",
-      registrationEnd: "2026-07-10",
+      examType: "Central Govt Group B & C Officer Recruitment",
+      registrationStart: getRelativeDate(-10), // Opened 10 days ago
+      registrationEnd: getRelativeDate(14),   // Closes in 14 days (LIVE NOW!)
+      examDate: getRelativeDate(85),          // Exam in 85 days
       totalMarks: 200,
       cutoffMarks: 135.0,
       targetMarks: 165.0,
-      status: "in_preparation",
+      status: "registering",
       priority: "medium",
       websiteUrl: "https://ssc.gov.in",
       youtubeUrl: "https://www.youtube.com/results?search_query=ssc+cgl+2026+preparation+strategy+syllabus",
@@ -184,10 +182,40 @@ export const initialData = {
       marksDistribution: "Quantitative (50M), Reasoning (50M), English (50M), General Awareness (50M)",
       syllabusSummary: "Arithmetic, Advanced Math (Geometry, Algebra, Trigonometry), Reasoning, English Grammar, Static GK.",
       subjects: [
-        { id: "ssc-s1", name: "Quantitative Aptitude & Advanced Math", weightage: 25, status: "in_progress" },
-        { id: "ssc-s2", name: "General Intelligence & Reasoning", weightage: 25, status: "completed" },
-        { id: "ssc-s3", name: "English Comprehension & Grammar", weightage: 25, status: "completed" },
-        { id: "ssc-s4", name: "General Awareness & Static GK", weightage: 25, status: "to_study" }
+        { id: "ssc-s1", name: "Quantitative Aptitude & Advanced Math", category: "Mathematical & Numerical Skills", weightage: 25, status: "in_progress" },
+        { id: "ssc-s2", name: "General Intelligence & Analytical Reasoning", category: "Logical Reasoning", weightage: 25, status: "completed" },
+        { id: "ssc-s3", name: "English Comprehension & Grammar", category: "Language Proficiency", weightage: 25, status: "completed" },
+        { id: "ssc-s4", name: "General Awareness & Static GK", category: "General Awareness", weightage: 25, status: "to_study" }
+      ]
+    },
+    {
+      id: "exam-infy-hack-2027",
+      title: "Infosys HackWithInfy & Specialist Programmer Hiring",
+      category: "Offcampus",
+      organization: "Infosys Limited",
+      examType: "National Hackathon & High-Package Campus Drive",
+      registrationStart: getRelativeDate(-3), // Opened 3 days ago
+      registrationEnd: getRelativeDate(25),   // Closes in 25 days (LIVE NOW!)
+      examDate: getRelativeDate(68),          // Round 1 in 68 days
+      totalMarks: 100,
+      cutoffMarks: 60.0,
+      targetMarks: 90.0,
+      status: "registering",
+      priority: "high",
+      websiteUrl: "https://www.infosys.com/careers",
+      youtubeUrl: "https://www.youtube.com/results?search_query=hackwithinfy+preparation+coding+questions",
+      examPattern: {
+        mode: "Online Competitive Coding Sandbox",
+        duration: "180 Mins",
+        totalQuestions: "3 Hard Algorithmic Problems",
+        negativeMarking: "Testcase partial evaluation"
+      },
+      marksDistribution: "Data Structures & Trees (35%), Dynamic Programming (40%), Graph Algorithms (25%)",
+      syllabusSummary: "Dynamic Programming, Trees, Graphs, Segment Trees, Bit Manipulation, String Algorithms.",
+      subjects: [
+        { id: "infy-s1", name: "Dynamic Programming & Optimization", category: "Advanced Data Structures & Algorithms", weightage: 40, status: "in_progress" },
+        { id: "infy-s2", name: "Graph Theory & Network Flows", category: "Advanced Data Structures & Algorithms", weightage: 35, status: "to_study" },
+        { id: "infy-s3", name: "Trees, Tries & String Matching", category: "Advanced Data Structures & Algorithms", weightage: 25, status: "completed" }
       ]
     }
   ],
@@ -273,7 +301,6 @@ export const initialData = {
       platform: "Coursera",
       instructor: "Andrew Ng / DeepLearning.AI",
       category: "AI & Data Science",
-      progress: 85,
       status: "in_progress",
       certificateUrl: "https://coursera.org/verify/ML-ANDREW-NG",
       keyLearnings: "Supervised learning, neural networks, cost functions, gradient descent optimization."
@@ -284,7 +311,6 @@ export const initialData = {
       platform: "freeCodeCamp",
       instructor: "freeCodeCamp Curriculum",
       category: "Web Development",
-      progress: 100,
       status: "completed",
       certificateUrl: "https://freecodecamp.org/certification/user/react",
       keyLearnings: "RESTful architecture, React hooks, state management, full production deployment."
@@ -295,7 +321,6 @@ export const initialData = {
       platform: "Udemy",
       instructor: "Maximilian Schwarzmüller",
       category: "Cloud & DevOps",
-      progress: 70,
       status: "in_progress",
       certificateUrl: "",
       keyLearnings: "Multi-stage Dockerfiles, Docker Compose networking, K8s Pods, Services, Deployments."
@@ -306,7 +331,6 @@ export const initialData = {
       platform: "MIT OCW / YouTube",
       instructor: "Robert Morris (MIT 6.824)",
       category: "Core CS",
-      progress: 50,
       status: "in_progress",
       certificateUrl: "",
       keyLearnings: "MapReduce, Raft consensus algorithm, fault tolerance, replication strategies."
@@ -314,13 +338,13 @@ export const initialData = {
   ],
 
   skills: [
-    { id: "sk-1", name: "Python", category: "Language", proficiency: "Expert", levelPercent: 92 },
-    { id: "sk-2", name: "React.js / JavaScript", category: "Framework", proficiency: "Expert", levelPercent: 90 },
-    { id: "sk-3", name: "Algorithms & Data Structures", category: "Core CS", proficiency: "Advanced", levelPercent: 88 },
-    { id: "sk-4", name: "PostgreSQL & Database Design", category: "Database", proficiency: "Advanced", levelPercent: 85 },
-    { id: "sk-5", name: "Docker & Containerization", category: "DevOps & Cloud", proficiency: "Advanced", levelPercent: 80 },
-    { id: "sk-6", name: "Kubernetes & Orchestration", category: "DevOps & Cloud", proficiency: "Intermediate", levelPercent: 70 },
-    { id: "sk-7", name: "FastAPI / Node.js Backends", category: "Framework", proficiency: "Advanced", levelPercent: 86 },
-    { id: "sk-8", name: "Linux System Administration", category: "Tool", proficiency: "Advanced", levelPercent: 82 }
+    { id: "sk-1", name: "Python", category: "Language", proficiency: "Expert" },
+    { id: "sk-2", name: "React.js / JavaScript", category: "Framework", proficiency: "Expert" },
+    { id: "sk-3", name: "Algorithms & Data Structures", category: "Core CS", proficiency: "Advanced" },
+    { id: "sk-4", name: "PostgreSQL & Database Design", category: "Database", proficiency: "Advanced" },
+    { id: "sk-5", name: "Docker & Containerization", category: "DevOps & Cloud", proficiency: "Advanced" },
+    { id: "sk-6", name: "Kubernetes & Orchestration", category: "DevOps & Cloud", proficiency: "Intermediate" },
+    { id: "sk-7", name: "FastAPI / Node.js Backends", category: "Framework", proficiency: "Advanced" },
+    { id: "sk-8", name: "Linux System Administration", category: "Tool", proficiency: "Advanced" }
   ]
 };
