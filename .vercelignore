@@ -1,0 +1,12 @@
+# Version Control
+.git
+.gitignore
+
+# Dependencies & Build
+node_modules/
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

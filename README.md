@@ -1,290 +1,162 @@
-# TaskFlow — Enterprise Task & Project Management System
+# PathFlow — Modern Learning, Exam & Career Operating System
 
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Framework-Flask%203.1-green.svg)](https://flask.palletsprojects.com/)
-[![Database](https://img.shields.io/badge/Database-SQLite%2FSQLAlchemy-orange.svg)](https://www.sqlalchemy.org/)
-[![Auth](<https://img.shields.io/badge/Auth-JWT%20(Flask--JWT--Extended)-red.svg>)](https://flask-jwt-extended.readthedocs.io/)
-[![Deployment](https://img.shields.io/badge/Deploy-Render.com-black.svg)](https://render.com/)
+[![React](https://img.shields.io/badge/Frontend-React%2018-blue.svg?logo=react)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Bundler-Vite%205-purple.svg?logo=vite)](https://vitejs.dev/)
+[![Deployment](https://img.shields.io/badge/Deploy-Vercel-black.svg?logo=vercel)](https://vercel.com/)
+[![Theme](https://img.shields.io/badge/Theme-Light%20%7C%20Dark%20Mode-yellow.svg)](#-light--dark-theme-feature)
+[![Bundle Size](https://img.shields.io/badge/Bundle-~77KB%20gzipped-brightgreen.svg)](#-architecture--lightweight-bundle)
 
-**TaskFlow** is a modern, high-performance, full-stack Task & Project Management application. Built with a robust **Flask REST API** backend and a responsive, dynamic **Single Page Application (SPA)** frontend featuring glassmorphism dark-mode UI.
+**PathFlow** is an ultra-lightweight, high-performance **React.js Single Page Application (SPA)** designed for managing **Target Exams (with Subject Weightages)**, **Software Projects & Future Ideas**, and **Courses & Skillsets**. 
 
----
-
-## 📋 Table of Contents
-
-1. [Key Features](#-key-features)
-2. [Tech Stack & Use Cases](#-tech-stack--use-cases)
-3. [System Architecture](#-system-architecture)
-4. [Database Schema](#-database-schema)
-5. [Directory & File Structure](#-directory--file-structure)
-6. [API Endpoints Reference](#-api-endpoints-reference)
-7. [Local Setup & Installation](#-local-setup--installation)
-8. [Running Automated Tests](#-running-automated-tests)
-9. [Deployment (Render.com)](#-deployment-rendercom)
+It features full **Light & Dark mode**, a fully dynamic interactive calendar with real-time date navigation, dynamic metric calculations, and responsive layouts across mobile, tablet, and desktop screens. It is pre-configured for **instant deployment on Vercel**.
 
 ---
 
-## ✨ Key Features
+## 🌓 Light & Dark Theme Feature
 
-- 🔐 **Secure Authentication**: JWT-based user registration, login, and session persistence with password hashing (Bcrypt/Werkzeug).
-- 📁 **Project Workspace**: Create, update, and manage team projects with priority levels, status tracking, and member assignments.
-- 📝 **Task Management**: Full task CRUD with status workflows (`pending`, `in_progress`, `completed`), priority tagging (`low`, `medium`, `high`), and due dates.
-- 🔍 **Search, Filtering & Pagination**: Filter tasks by project, status, priority, or free-text title search with built-in API pagination.
-- 📊 **Real-time Analytics Dashboard**: Summary metrics for total projects, pending tasks, completed tasks, and completion percentages.
-- 🎨 **Modern Dark UI**: Premium glassmorphism styling, responsive layouts, interactive modals, and real-time DOM updates.
-- 🚀 **Production Ready**: Configured for instant cloud deployment on Render with Gunicorn WSGI server.
-
----
-
-## 🛠️ Tech Stack & Use Cases
-
-| Technology                    | Layer                  | Primary Use Case & Role                                                                                                 |
-| :---------------------------- | :--------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| **Python 3.9+**               | Core Language          | Business logic, backend execution environment, and script automation.                                                   |
-| **Flask 3.1**                 | Web Framework          | Lightweight RESTful Web Server API routing, request handling, and app factory.                                          |
-| **Flask-SQLAlchemy**          | ORM Layer              | Object-Relational Mapping to interact with database tables via Python classes (`User`, `Task`, `Project`, `Comment`).   |
-| **Flask-JWT-Extended**        | Security / Auth        | Generates, verifies, and decodes JSON Web Tokens (`Authorization: Bearer <token>`) for stateless endpoint protection.   |
-| **Flask-CORS**                | Security               | Handles Cross-Origin Resource Sharing (CORS) headers for secure frontend-backend communication.                         |
-| **Werkzeug**                  | Security / Utilities   | Password hashing (`generate_password_hash`, `check_password_hash`) and WSGI utilities.                                  |
-| **Gunicorn 23.0**             | WSGI Production Server | Pre-fork worker server used in production (Render) to serve concurrent HTTP requests.                                   |
-| **SQLite / PostgreSQL**       | Database               | SQLite for zero-config local development; drop-in compatible with PostgreSQL for production.                            |
-| **Vanilla HTML5 & CSS3**      | Frontend Presentation  | Semantic HTML, CSS variables, Flexbox/Grid layout, animations, and custom dark glassmorphism theme.                     |
-| **Vanilla JavaScript (ES6+)** | Frontend Logic         | Single Page Application state management, fetch API requests, JWT storage, DOM manipulation, and dynamic modal dialogs. |
-| **Pytest 8.x**                | Automated Testing      | Comprehensive unit and integration testing suite for auth, task isolation, and permissions.                             |
+PathFlow includes first-class support for both Light and Dark themes:
+- **Instant Header Toggle**: A Moon/Sun toggle button directly in the top header bar.
+- **Settings Theme Selector**: Visual theme preview cards in the Workspace Settings view.
+- **Persistent Preference**: Automatically saves your preference (`light` or `dark`) to `localStorage`.
+- **Custom Tuned Palettes**:
+  - **Light Mode**: Figma pastel aesthetic (`#F4F5F9` background, `#FFFFFF` cards, `#6C5DD3` primary purple).
+  - **Dark Mode**: Sleek OLED/dark surface (`#0E0F1A` background, `#181928` cards, `#7F70F1` primary purple).
 
 ---
 
-## 🏗️ System Architecture
+## 📅 Dynamic Calendar & Real-Time Date Features
 
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                        FRONTEND LAYER (Browser)                        │
-│                                                                        │
-│   Single Page Application (index.html + style.css + app.js)            │
-│   - Auth Views (Login / Register)                                      │
-│   - Dashboard Analytics UI                                             │
-│   - Task & Project Modals                                              │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-                         HTTP / REST (JSON API)
-                                    │
-┌───────────────────────────────────▼────────────────────────────────────┐
-│                        BACKEND LAYER (Flask API)                       │
-│                                                                        │
-│   ┌────────────────────────────────────────────────────────────────┐   │
-│   │ app.py (App Factory & Top-level Server Entrypoint)             │   │
-│   └───────────────┬────────────────────────────────┬───────────────┘   │
-│                   │                                │                   │
-│         ┌─────────▼─────────┐            ┌─────────▼─────────┐         │
-│         │  Blueprint Routes │            │  Security / Auth  │         │
-│         │  - /api/auth      │            │  - JWT Verification│         │
-│         │  - /api/tasks     │            │  - Password Hashing│         │
-│         │  - /api/projects  │            └───────────────────┘         │
-│         └─────────┬─────────┘                                          │
-└───────────────────┼────────────────────────────────────────────────────┘
-                    │ SQLAlchemy ORM
-┌───────────────────▼────────────────────────────────────────────────────┐
-│                        DATABASE LAYER (SQLite)                         │
-│                                                                        │
-│   Tables: users ◄──► projects ◄──► tasks ◄──► comments                 │
-└────────────────────────────────────────────────────────────────────────┘
+- **Live System Dates**: No hardcoded 2021 mockups. Displays real dynamic dates (e.g. today's date formatted).
+- **Interactive Month Navigation**: Working `<` and `>` buttons in both the header and the mini calendar card to navigate between previous and upcoming months.
+- **Accurate Monthly Grids**: Computes real weekdays, start day offset, days in month, and trailing padding for any year/month.
+- **Today & Selected Highlighting**: Highlights today's date and active selected day.
+- **Milestone & Exam Indicators**: Dots underneath days that have scheduled milestones or exam deadlines.
+
+---
+
+## 🎯 The Three Core Pillars
+
+### 1. Target Exams & Real-Time Competitive Hub (`ExamsView`)
+- **4 Major Strategic Categories**:
+  - **PSU (Public Sector Undertakings)**: ISRO ICRB, BARC OCES/DGFS, DRDO, ONGC, IOCL, NTPC, BEL, BHEL.
+  - **Technical & Research**: GATE CS/DA, AWS Solutions Architect, LeetCode Global Challenges, Codeforces.
+  - **Non Technical Govt**: UPSC Civil Services Examination (Prelims/Mains), SSC CGL, Banking PO (IBPS/SBI), Railways RRB.
+  - **Offcampus Recruitment Drives**: TCS National Qualifier Test (NQT Ninja & Digital), Infosys HackWithInfy, Amazon WOW, Google Summer of Code.
+- **Open-Source Real-Time API Stream**:
+  - Live client-side connection with open-source competitive coding feeds (`kontests.net`) and verified national recruitment feeds.
+  - Active Radar Pulse indicator with real-time status and 1-click **"Sync Live Feeds"** refresh.
+  - 1-click **"+ Track in My Exams"** to import any live notification into your personal target tracking workspace.
+- **Comprehensive Examination Blueprint Modal**:
+  - **Registration $\rightarrow$ Exam Day Stepper**: Clear timeline showing registration start, closing deadline, and exam date with countdowns.
+  - **Exam Pattern & Mode Specifications**: Mode (Online CBT / Offline OMR), Duration (e.g. 180 Mins), Total Questions, and Negative Marking (e.g. -0.33 per wrong answer).
+  - **Cutoff Benchmark vs Target Score Meter**: Visual comparative safety buffer showing qualifying cutoff against your target goal.
+  - **Marks Distribution & Subject Weightages**: Individual syllabus subjects with weightage percentages, completion progress, and direct portal links.
+- **Dual View Layout Switcher**:
+  - **Grid Cards View**: Visual cards with status tags, registration countdowns, pattern chips, score buffers, and quick action buttons.
+  - **Comparative Matrix Table**: Dense high-level overview table comparing all exams across categories, deadlines, durations, and marks.
+
+### 2. Software Projects & Future Ideas Lab (`ProjectsView`)
+- **Dual-Track Workflow**:
+  - **Active Portfolio Builds** (`current`): Projects currently in active development, polishing, or deployed.
+  - **Future Ideas Incubator** (`future_idea`): Backlog for novel project concepts, architecture ideas, and exploratory tech stacks.
+- **Domain & Difficulty Tagging**: Full Stack, AI/ML, Cloud & DevOps, Mobile, Systems, Blockchain, etc.
+- **Tech Stack Badges**: Visual tag pills (e.g. `React`, `Node.js`, `Docker`, `Python`, `PostgreSQL`).
+- **Showcase Links & Notes**: Store GitHub repository links, live deployment URLs, key features, and core learning takeaways.
+
+### 3. Courses & Skillset Matrix (`CoursesView`)
+- **Skill Proficiency Matrix**:
+  - Track programming languages, frameworks, databases, and DevOps tools with percentage progress bars.
+  - Proficiency levels: Beginner, Intermediate, Advanced, Expert.
+- **Course & Certification Tracker**:
+  - Manage courses across Coursera, Udemy, YouTube, edX, MIT OCW, freeCodeCamp, etc.
+  - Track completion progress (0–100%), platform badges, instructor, verified certificate URLs, and key takeaways.
+
+---
+
+## ⚡ Architecture & Lightweight Bundle
+
+- **Core Framework**: React 18 + Vite 5 (ultra-fast build and hot module replacement).
+- **Icons**: Lucide React + custom inline SVG illustrations.
+- **State Management**: Reactive state persisted in `localStorage` with rich default demo seed data.
+- **Celebration Effects**: `canvas-confetti` animations triggered on milestone completion.
+- **Production Bundle Size**:
+  - Total compressed size: **~77 KB (gzip)**
+  - Zero heavy charting libraries: SVG-powered spline line charts and concentric rings for maximum speed and zero dependencies.
+
+---
+
+## ☁️ Deployment on Vercel
+
+The project is pre-configured with `vercel.json` for one-click deployment on **Vercel**:
+
+```json
+{
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+### Option A: Deploy via Vercel Web Dashboard (Recommended)
+
+1. Push your repository to GitHub:
+   ```bash
+   git add .
+   git commit -m "feat: complete dynamic calendar, dark mode, and vercel deployment"
+   git push origin main
+   ```
+2. Log in to [vercel.com](https://vercel.com) and click **Add New...** $\rightarrow$ **Project**.
+3. Select your repository and click **Import**.
+4. Vercel automatically detects **Vite** as the framework.
+5. Click **Deploy**. Your app will build and deploy globally in seconds!
+
+### Option B: Deploy via Vercel CLI
+
+```bash
+npm install -g vercel
+vercel
+# For production deployment:
+vercel --prod
 ```
 
 ---
 
-## 🗄️ Database Schema
-
-```text
-  ┌─────────────────┐       1:N       ┌─────────────────┐
-  │     users       │─────────────────│    projects     │
-  ├─────────────────┤                 ├─────────────────┤
-  │ id (PK)         │                 │ id (PK)         │
-  │ username        │                 │ name            │
-  │ email           │                 │ description     │
-  │ password_hash   │                 │ created_by (FK) │
-  │ created_at      │                 │ created_at      │
-  └────────┬────────┘                 └────────┬────────┘
-           │                                   │
-           │ 1:N                               │ 1:N
-           ▼                                   ▼
-  ┌─────────────────────────────────────────────────────┐
-  │                        tasks                        │
-  ├─────────────────────────────────────────────────────┤
-  │ id (PK)                                             │
-  │ title, description                                  │
-  │ status ('pending' | 'in_progress' | 'completed')    │
-  │ priority ('low' | 'medium' | 'high')                │
-  │ user_id (FK -> users.id)                            │
-  │ project_id (FK -> projects.id)                      │
-  │ due_date, created_at, updated_at                    │
-  └──────────────────────────┬──────────────────────────┘
-                             │ 1:N
-                             ▼
-                  ┌────────────────────┐
-                  │      comments      │
-                  ├────────────────────┤
-                  │ id (PK)            │
-                  │ content            │
-                  │ task_id (FK)       │
-                  │ user_id (FK)       │
-                  │ created_at         │
-                  └────────────────────┘
-```
-
----
-
-## 📁 Directory & File Structure
-
-```text
-TaskMangement/
-├── app.py              # Application Factory (create_app), routes, error handlers, entrypoint
-├── auth.py             # Authentication Blueprint (/api/auth: register, login, profile)
-├── tasks.py            # Tasks Blueprint (/api/tasks: CRUD, search, filter, paginate)
-├── projects.py         # Projects Blueprint (/api/projects: CRUD, project members)
-├── models.py           # SQLAlchemy database models (User, Project, Task, Comment)
-├── config.py           # Configuration classes (Development, Testing, Production)
-├── requirements.txt    # Python dependencies list for environment & deployment
-├── render.yaml         # Render Cloud Blueprint specification for deployment
-├── README.md           # System documentation
-│
-├── static/             # Static frontend assets
-│   ├── css/
-│   │   └── style.css   # Dark glassmorphism layout, animations, responsive design
-│   └── js/
-│       └── app.js      # SPA logic, JWT token management, API requests, dynamic DOM
-│
-├── templates/          # HTML templates
-│   └── index.html      # Main Single Page Application shell HTML
-│
-└── tests/              # Automated Test Suite
-    └── test_tasks.py   # Pytest suite covering auth, task CRUD, isolation, and endpoints
-```
-
-### Detailed File Descriptions
-
-- **`app.py`**: Initializes the Flask app factory (`create_app`), configures CORS, initializes SQLAlchemy and JWT extensions, registers feature blueprints, and exposes the top-level `app` object for Gunicorn WSGI server.
-- **`auth.py`**: Defines authentication routes (`/register`, `/login`, `/me`). Handles input validation, password hashing verification, and JWT access token issuance.
-- **`tasks.py`**: Manages all task operations. Enforces user data isolation so users can only access their own tasks.
-- **`projects.py`**: Handles project creation, list retrieval, updating, deletion, and task association.
-- **`models.py`**: Contains SQLAlchemy ORM classes (`User`, `Task`, `Project`, `Comment`) with relationship bindings and `to_dict()` serialization helpers.
-- **`config.py`**: Sets up base configuration environment variables like `SECRET_KEY`, `JWT_SECRET_KEY`, and `SQLALCHEMY_DATABASE_URI`.
-- **`render.yaml`**: Infrastructure-as-code deployment descriptor for Render.
-
----
-
-## 📡 API Endpoints Reference
-
-### 1. Authentication Endpoints (`/api/auth`)
-
-| Method | Endpoint             | Request Body                        | Description                          |
-| :----- | :------------------- | :---------------------------------- | :----------------------------------- |
-| `POST` | `/api/auth/register` | `{"username", "email", "password"}` | Register a new user account          |
-| `POST` | `/api/auth/login`    | `{"username", "password"}`          | Authenticate user & return JWT token |
-| `GET`  | `/api/auth/me`       | _Header: Bearer Token_              | Retrieve current user profile        |
-
-### 2. Task Endpoints (`/api/tasks`)
-
-_All task endpoints require `Authorization: Bearer <access_token>` header._
-
-| Method   | Endpoint          | Query Parameters                                                     | Description                              |
-| :------- | :---------------- | :------------------------------------------------------------------- | :--------------------------------------- |
-| `GET`    | `/api/tasks`      | `status`, `priority`, `search`, `page`, `per_page`                   | List & filter user tasks with pagination |
-| `POST`   | `/api/tasks`      | Body: `{"title", "description", "status", "priority", "project_id"}` | Create a new task                        |
-| `GET`    | `/api/tasks/<id>` | —                                                                    | Fetch details of a specific task         |
-| `PUT`    | `/api/tasks/<id>` | Body: `{"title", "status", "priority", ...}`                         | Update an existing task                  |
-| `DELETE` | `/api/tasks/<id>` | —                                                                    | Delete a task                            |
-
-### 3. Project Endpoints (`/api/projects`)
-
-_All project endpoints require `Authorization: Bearer <access_token>` header._
-
-| Method   | Endpoint             | Description                                 |
-| :------- | :------------------- | :------------------------------------------ |
-| `GET`    | `/api/projects`      | List all projects created by user           |
-| `POST`   | `/api/projects`      | Create a new project                        |
-| `GET`    | `/api/projects/<id>` | Retrieve project details & associated tasks |
-| `PUT`    | `/api/projects/<id>` | Update project details                      |
-| `DELETE` | `/api/projects/<id>` | Delete project                              |
-
-### 4. System Health (`/api/health`)
-
-| Method | Endpoint      | Description                                      |
-| :----- | :------------ | :----------------------------------------------- |
-| `GET`  | `/api/health` | Service health status check (`{"status": "ok"}`) |
-
----
-
-## 💻 Local Setup & Installation
+## 💻 Local Setup & Development
 
 ### Prerequisites
+- Node.js 18+ (tested on Node 20.11)
+- npm or pnpm
 
-- Python 3.9 or higher
-- Git
+### Quick Start
 
-### Step-by-Step Installation
-
-1. **Clone the Repository**
-
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/Rohan00kumar/TaskMangement.git
    cd TaskMangement
    ```
 
-2. **Create and Activate a Virtual Environment**
-   - **Windows (PowerShell):**
-     ```powershell
-     python -m venv venv
-     .\venv\Scripts\Activate.ps1
-     ```
-   - **Linux / macOS:**
-     ```bash
-     python3 -m venv venv
-     source venv/bin/activate
-     ```
-
-3. **Install Dependencies**
-
+2. **Install dependencies:**
    ```bash
-   pip install -r requirements.txt
+   npm install
    ```
 
-4. **Run the Application**
-
+3. **Start the development server:**
    ```bash
-   python app.py
+   npm run dev
    ```
+   Open your browser at `http://localhost:3000`.
 
-5. **Access the Web Interface**
-   Open your browser and navigate to: `http://127.0.0.1:5000`
-
----
-
-## 🧪 Running Automated Tests
-
-The codebase includes an extensive **Pytest** suite covering authentication, task creation, data isolation between users, and API endpoints.
-
-To run all automated tests:
-
-```bash
-pytest tests/ -v
-```
-
----
-
-## ☁️ Deployment (Render.com)
-
-This repository includes a pre-configured [`render.yaml`](file:///d:/My%20Projects/ILP/TaskMangement/render.yaml) blueprint file.
-
-### Instant Blueprint Deployment
-
-1. Log into your [Render Dashboard](https://dashboard.render.com).
-2. Click **New +** $\rightarrow$ **Blueprint**.
-3. Connect your GitHub repository (`Rohan00kumar/TaskMangement`).
-4. Render will automatically detect `render.yaml` and configure:
-   - **Runtime**: `Python`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:app`
-5. Click **Apply**. Your app will be deployed and assigned a live URL!
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
+   The production-ready assets will be generated in `dist/`.
 
 ---
 
